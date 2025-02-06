@@ -1,0 +1,74 @@
+[debug] [2025-02-04T11:18:31.818Z] ----------------------------------------------------------------------
+[debug] [2025-02-04T11:18:31.821Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\nasir\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2025-02-04T11:18:31.822Z] CLI Version:   13.29.3
+[debug] [2025-02-04T11:18:31.822Z] Platform:      win32
+[debug] [2025-02-04T11:18:31.822Z] Node Version:  v22.11.0
+[debug] [2025-02-04T11:18:31.823Z] Time:          Tue Feb 04 2025 17:18:31 GMT+0600 (Bangladesh Standard Time)
+[debug] [2025-02-04T11:18:31.823Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-02-04T11:18:31.834Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-02-04T11:18:31.835Z] > authorizing via signed-in user (nasir2242001@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  D:\2025-projects\React-native\CampusHub
+
+[debug] [2025-02-04T11:23:58.335Z] ----------------------------------------------------------------------
+[debug] [2025-02-04T11:23:58.339Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\nasir\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2025-02-04T11:23:58.340Z] CLI Version:   13.29.3
+[debug] [2025-02-04T11:23:58.340Z] Platform:      win32
+[debug] [2025-02-04T11:23:58.340Z] Node Version:  v22.11.0
+[debug] [2025-02-04T11:23:58.341Z] Time:          Tue Feb 04 2025 17:23:58 GMT+0600 (Bangladesh Standard Time)
+[debug] [2025-02-04T11:23:58.341Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-02-04T11:23:58.352Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-02-04T11:23:58.352Z] > authorizing via signed-in user (nasir2242001@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  D:\2025-projects\React-native\CampusHub
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2025-02-04T11:24:39.194Z] Checked if tokens are valid: false, expires at: 1719409604166
+[debug] [2025-02-04T11:24:39.195Z] Checked if tokens are valid: false, expires at: 1719409604166
+[debug] [2025-02-04T11:24:39.195Z] > refreshing access token with scopes: []
+[debug] [2025-02-04T11:24:39.199Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-02-04T11:24:39.199Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-02-04T11:24:39.554Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-02-04T11:24:39.554Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-02-04T11:24:39.555Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/availableProjects pageSize=100
+[debug] [2025-02-04T11:24:39.881Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/availableProjects 401
+[debug] [2025-02-04T11:24:39.883Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/availableProjects [omitted]
+[debug] [2025-02-04T11:24:39.883Z] Got a 401 Unauthenticated error for a call that required authentication. Refreshing tokens.
+[debug] [2025-02-04T11:24:39.884Z] Checked if tokens are valid: false, expires at: 1719409604166
+[debug] [2025-02-04T11:24:39.884Z] Checked if tokens are valid: false, expires at: 1719409604166
+[debug] [2025-02-04T11:24:39.885Z] > refreshing access token with scopes: []
+[debug] [2025-02-04T11:24:39.888Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-02-04T11:24:39.888Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-02-04T11:24:39.995Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-02-04T11:24:39.996Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-02-04T11:24:40.003Z] Request to https://firebase.googleapis.com/v1beta1/availableProjects?pageSize=100 had HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+[debug] [2025-02-04T11:24:40.226Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/availableProjects?pageSize=100 had HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+    at responseToError (C:\Users\nasir\AppData\Roaming\npm\node_modules\firebase-tools\lib\responseToError.js:52:12)
+    at RetryOperation._fn (C:\Users\nasir\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:312:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[error] 
+[error] Error: Failed to list available Google Cloud Platform projects. See firebase-debug.log for more info.
