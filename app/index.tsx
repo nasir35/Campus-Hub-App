@@ -29,7 +29,6 @@ export default function Home() {
   if (!user) {
     return <Redirect href="./login" />;
   }
-  console.log(user)
 
   return <Redirect href={"./newsfeed"} />
 }

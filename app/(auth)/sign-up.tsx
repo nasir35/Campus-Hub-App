@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { createUserWithEmailAndPassword, User } from "firebase/auth";
 import * as ImagePicker from "expo-image-picker";
 import { auth } from "../../firebaseConfig"; // Import Firebase Storage
-import { uploadImageToCloudinary } from "@/utils/cloudinaryUpload";
+import { uploadProfileImageToCloudinary } from "@/utils/cloudinaryUpload";
 
 export default function SignUp() {
   const [user, setUser] = useState<User | null>(null);
@@ -57,7 +57,7 @@ export default function SignUp() {
       
       let profilePic = "https://res.cloudinary.com/dax7yvopb/image/upload/v1738675080/bw6eijmj3vi2ppadpxyp.jpg";
       if (profileImage) {
-        const result = await uploadImageToCloudinary(profileImage);
+        const result = await uploadProfileImageToCloudinary(profileImage);
         profilePic = result.secure_url;
       }
 
