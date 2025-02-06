@@ -5,6 +5,8 @@ import { createUserWithEmailAndPassword, User } from "firebase/auth";
 import * as ImagePicker from "expo-image-picker";
 import { auth } from "../../firebaseConfig"; // Import Firebase Storage
 import { uploadProfileImageToCloudinary } from "@/utils/cloudinaryUpload";
+import { env } from "@/constants/envValues";
+import axios from "axios";
 
 export default function SignUp() {
   const [user, setUser] = useState<User | null>(null);
@@ -61,14 +63,8 @@ export default function SignUp() {
         profilePic = result.secure_url;
       }
 
-      const response = await fetch("http://localhost:5000/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, mobile, profilePic }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
+      const data:any = await axios.post(`${env.API_URL}/users/register`, { name, email, password, mobile, profilePic });
+      if (data.status===201) {
         Alert.alert("Success", "Account created successfully! Please Login.");
         router.push("/login");
       } else {
