@@ -1,32 +1,22 @@
-import { Link, Stack } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from "react-native";
+import { useRouter } from "expo-router";
 
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const NotFoundScreen = () => {
+  const router = useRouter();
 
-export default function NotFoundScreen() {
   return (
-    <>
-      <Stack.Screen options={{ title: 'Oops!' }} />
-      <ThemedView style={styles.container}>
-        <ThemedText type="title">This screen doesn't exist.</ThemedText>
-        <Link href="/" style={styles.link}>
-          <ThemedText type="link">Go to home screen!</ThemedText>
-        </Link>
-      </ThemedView>
-    </>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#f8f9fa" }}>
+      <Image
+        source={{ uri: "https://i.imgur.com/qIufhof.png" }} // Example illustration
+        style={{ width: 250, height: 250, marginBottom: 20 }}
+      />
+      <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 10 }}>Oops! Page not found</Text>
+      <Text style={{ fontSize: 16, color: "#6c757d", textAlign: "center", marginBottom: 20 }}>The page you are looking for might have been removed or does not exist.</Text>
+      <TouchableOpacity onPress={() => router.push("/")} style={{ backgroundColor: "#007bff", paddingVertical: 12, paddingHorizontal: 24, borderRadius: 8 }}>
+        <Text style={{ color: "white", fontSize: 16 }}>Go Back Home</Text>
+      </TouchableOpacity>
+    </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
-  },
-});
+export default NotFoundScreen;
