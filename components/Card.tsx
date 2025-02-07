@@ -7,10 +7,10 @@ import { renderDetails } from "@/utils/helper";
 import axios from "axios";
 import { env } from "@/constants/envValues";
 
-const PostCard = ({ data, onPress, selfId }: { data: any, onPress?: () => void, selfId: string }) => {
+const PostCard = ({ data, onPress, userOnPress, selfId }: { data: any, onPress?: () => void, userOnPress?: () => void, selfId: string }) => {
 
 
-  const { _id, author, content, image, createdAt, comments, likes} = data;
+  const { _id, author, content, image, createdAt, comments, likes } = data;
   const [liked, setLiked] = useState(false);
   // setLiked(likes.find((id:any)=>(id==selfId)))
   // handle like
@@ -18,7 +18,7 @@ const PostCard = ({ data, onPress, selfId }: { data: any, onPress?: () => void, 
     try {
       setLiked(!liked);
       const response = await axios.post(`${env.API_URL}/posts/like/`, { 'postId': _id, 'userId': selfId });
-      if(response.status==200)console.log('great')
+      if (response.status == 200) console.log('great')
     } catch (error) {
       console.log(error)
     }
@@ -28,13 +28,16 @@ const PostCard = ({ data, onPress, selfId }: { data: any, onPress?: () => void, 
     <TouchableOpacity onPress={onPress}>
       <View className="bg-white p-4 my-2 rounded-2xl shadow-md">
         {/* Header */}
-        <View className="flex-row items-center mb-3">
-          <Image source={{ uri: author?.profilePic }} className="w-10 h-10 rounded-full mr-3" />
-          <View>
-            <Text className="text-base font-bold">{author?.name}</Text>
-            <Text className="text-xs text-gray-500">{formatPostDate(createdAt)}</Text>
+        <TouchableOpacity onPress={userOnPress}>
+          <View className="flex-row items-center mb-3">
+            <Image source={{ uri: author?.profilePic }} className="w-10 h-10 rounded-full mr-3" />
+            <View>
+              <Text className="text-base font-bold">{author?.name}</Text>
+              <Text className="text-xs text-gray-500">{formatPostDate(createdAt)}</Text>
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
+
 
         <Text className="text-sm mb-3">{renderDetails(content)}</Text>
         {image ? <Image source={{ uri: image }} resizeMode='contain' className="w-full h-60 rounded-lg mb-3" /> : <View className="mb-5 mt-2"></View>}

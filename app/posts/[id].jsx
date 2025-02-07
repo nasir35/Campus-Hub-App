@@ -22,7 +22,27 @@ const PostDetailCard = () => {
   const [editing, setEditing] = useState(false);
   const [editedContent, setEditedContent] = useState('');
 
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch(`${env.API_URL}/posts/${id}`);
+      const data = await response.json();
+      if (data.success) {
+        setEditedContent(data.data.content);
+        setPost(data.data);
+        setComments(data.data.comments || []);
+        const isLiked = data.data.likes.find((id) => (id == auth.user._id));
+        setLiked(isLiked)
+      }
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const auth = useAuth()
+  const handleUserPress = (id) => router.push(`../profiles/${id}`)
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -85,9 +105,10 @@ const PostDetailCard = () => {
       if (comment.trim()) {
         const response = await axios.post(`${env.API_URL}/posts/comment/${id}`, { 'user': auth.user._id, 'text': comment });
         if (response.status === 201) {
-          const newComment = { id: Date.now().toString(), text: comment };
-          setComments([...comments, newComment]);
+          const newComment = { createdAt: Date.now().toString(), text: comment };
+          // setComments([...comments, newComment]);
           setComment("");
+          fetchPosts();
         }
       }
     } catch (error) {
@@ -107,22 +128,26 @@ const PostDetailCard = () => {
   };
 
   return (
-    <SafeAreaView className="h-full">
+    <SafeAreaView className="h-full p-2">
       <FlatList
         data={comments}
         // keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View className="mt-3 bg-gray-100 rounded-md p-2 pb-5">
-            <View className="flex-row gap-2 ml-2 items-center">
-              <Image
-                source={{ uri: item.user.profilePic }}
-                className="w-8 h-8 rounded-full"
-              />
-              <View>
-                <Text className="text-sm font-bold">{item.user.name}</Text>
-                <Text className="text-xs text-gray-600">{formatPostDate(item.createdAt)}</Text>
+            
+            {/* TODO: add user id in the comment api */}
+            <TouchableOpacity onPress={()=>(handleUserPress(item._id), console.log(item._id))}>
+              <View className="flex-row gap-2 ml-2 items-center">
+                <Image
+                  source={{ uri: item.user.profilePic }}
+                  className="w-8 h-8 rounded-full"
+                />
+                <View>
+                  <Text className="text-sm font-bold">{item.user.name}</Text>
+                  <Text className="text-xs text-gray-600">{formatPostDate(item.createdAt)}</Text>
+                </View>
               </View>
-            </View>
+            </TouchableOpacity>
             <Text className="text-sm ml-2">{renderDetails(item.text)}</Text>
           </View>
 
@@ -136,16 +161,18 @@ const PostDetailCard = () => {
               <Text className="text-lg font-bold flex-1 text-center">Post Details</Text>
             </View>
 
-            <View className="bg-white p-4 my-2 rounded-2xl shadow-md">
+            <View className="bg-white p-4 rounded-2xl shadow-md">
               {/* Author */}
               <View className="flex-row items-center justify-between mb-3">
-                <View>
-                  <Image source={{ uri: author?.profilePic }} className="w-10 h-10 rounded-full mr-3" />
-                  <View>
-                    <Text className="text-xl font-bold">{author?.name}</Text>
-                    <Text className="text-sm text-gray-500">{formatPostDate(createdAt)}</Text>
+                <TouchableOpacity onPress={()=>handleUserPress(author._id)}>
+                  <View className="flex-row items-center mb-3">
+                    <Image source={{ uri: author?.profilePic }} className="w-10 h-10 rounded-full mr-3" />
+                    <View>
+                      <Text className="text-base font-bold">{author?.name}</Text>
+                      <Text className="text-xs text-gray-500">{formatPostDate(createdAt)}</Text>
+                    </View>
                   </View>
-                </View>
+                </TouchableOpacity>
                 {author._id === auth.user._id ? (
                   editing ? (
                     <View className="flex-row">
@@ -209,21 +236,20 @@ const PostDetailCard = () => {
                   <Feather name="share-2" size={24} color="black" />
                 </TouchableOpacity>
               </View>
-
-              {/* Comment Input */}
-              <View className="flex-row items-center mt-3 border rounded-lg p-2 border-gray-300">
-                <TextInput
-                  placeholder="Write a comment..."
-                  value={comment}
-                  onChangeText={setComment}
-                  className="flex-1 text-sm"
-                />
-                <TouchableOpacity onPress={handleCommentSubmit} className="ml-2">
-                  <AntDesign name="arrowright" size={24} color="blue" />
-                </TouchableOpacity>
-              </View>
             </View>
           </View>)} />
+      {/* Comment Input */}
+      <View className="flex-row items-center mt-3 border rounded-lg p-2 border-gray-300">
+        <TextInput
+          placeholder="Write a comment..."
+          value={comment}
+          onChangeText={setComment}
+          className="flex-1 text-sm"
+        />
+        <TouchableOpacity onPress={handleCommentSubmit} className="ml-2">
+          <AntDesign name="arrowright" size={24} color="blue" />
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };

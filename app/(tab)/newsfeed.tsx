@@ -40,6 +40,7 @@ export default function Newsfeed() {
   
 
   const handlePress = (id:string) => router.push(`/posts/${id}`)
+  const handleUserPress = (id:string)=>router.push(`../profiles/${id}`)
 
   if (loading)
     return (
@@ -64,7 +65,7 @@ export default function Newsfeed() {
         data={posts}
         renderItem={({ item }) => (
           <View className="mt-5">
-            <PostCard data={item} onPress={()=>{handlePress(item._id)}} selfId= {auth.user.id} />
+            <PostCard data={item} onPress={()=>{handlePress(item._id)}} userOnPress={()=>handleUserPress(item.author._id)} selfId= {auth.user.id} />
           </View>
         )}
         keyExtractor={(item) => item._id}
