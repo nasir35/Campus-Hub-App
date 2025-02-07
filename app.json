@@ -4,7 +4,7 @@
     "slug": "CampusHub",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/avatar.png",
+    "icon": "./assets/images/campus.jpg",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/avatar.png",
+        "foregroundImage": "./assets/images/campus.jpg",
         "backgroundColor": "#ffffff"
       }
     },

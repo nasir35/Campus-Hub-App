@@ -21,7 +21,7 @@ const chats = [
 
 export default function Chat() {
 
-  const handleChatPress = (id:string) => {router.push(`/chats/${id}`), console.log('bal')};
+  const handleChatPress = (id:string) => {router.push(`/chats/${id}`)};
   return (
     <View className="mt-10 flex-1 bg-gray-100 p-4">
       <View className="flex flex-row items-center justify-center">
