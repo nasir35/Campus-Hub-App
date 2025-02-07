@@ -6,10 +6,10 @@ import "@/global.css"
 
 export default function RootLayout() {
   return (
-    <>
-    <AuthProvider>
-      <AuthCheck />
-    </AuthProvider>
+      <>
+      <AuthProvider>
+        <AuthCheck />
+      </AuthProvider>
       <Toast />
       </>
   );
@@ -17,7 +17,6 @@ export default function RootLayout() {
 
 function AuthCheck() {
   const { user, isLoading } = useAuth();
-
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -27,7 +26,6 @@ function AuthCheck() {
   }
 
   return (
-    
       <Slot />
   );
 }

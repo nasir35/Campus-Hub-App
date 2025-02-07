@@ -11,6 +11,7 @@ import PostInput from "@/components/PostInput";
 import axios from "axios";
 import {useAuth} from "../context/authContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
 export default function Newsfeed() {
   const [searchVisible, setSearchVisible] = useState(false);

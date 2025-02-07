@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { View, TextInput, TouchableOpacity, Text, Alert, Image, ActivityIndicator } from "react-native";
-import { View, TextInput, TouchableOpacity, Text, Alert, Image, ActivityIndicator } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons"; // Icon library
 import { env } from "@/constants/envValues";
@@ -110,7 +109,6 @@ export default function PostInput() {
     <View className="p-4 border-b border-gray-300">
       <TextInput
         multiline
-        numberOfLines={10}
         numberOfLines={10}
         className="p-3 bg-gray-200 rounded-lg"
         placeholder="What's on your mind?"

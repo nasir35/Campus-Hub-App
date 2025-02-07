@@ -118,12 +118,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     setToken("");
     delete axios.defaults.headers.common["Authorization"];
-    router.push("/(auth)/login");
-    Toast.show({
-      type: "success",
-      text1: "Log out successful",
-      text2: "You have been Log out successfully!",
-    });
+    setTimeout(() => {
+      router.replace("/(auth)/login"); // Use replace instead of push
+    }, 100); // Small delay allows layout to mount
+
+    // Show toast after navigating
+    setTimeout(() => {
+      Toast.show({
+        type: "success",
+        text1: "Logged Out",
+        text2: "You have been logged out successfully!",
+      });
+    }, 2000);
   };
 
   return <AuthContext.Provider value={{ user, register, login, logout, isLoading, token }}>{children}</AuthContext.Provider>;
