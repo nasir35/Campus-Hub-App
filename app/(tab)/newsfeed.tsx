@@ -64,7 +64,7 @@ export default function Newsfeed() {
         data={posts}
         renderItem={({ item }) => (
           <View className="mt-5">
-            <PostCard data={item} onPress={()=>{handlePress(item._id)}} />
+            <PostCard data={item} onPress={()=>{handlePress(item._id)}} selfId= {auth.user.id} />
           </View>
         )}
         keyExtractor={(item) => item._id}
