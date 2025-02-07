@@ -1,15 +1,40 @@
 import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, Text, Alert, Image } from "react-native";
+import { View, TextInput, TouchableOpacity, Text, Alert, Image, ActivityIndicator } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons"; // Icon library
 import { env } from "@/constants/envValues";
 import axios from "axios";
 import { uploadPostImageToCloudinary } from "@/utils/cloudinaryUpload";
+import {auth} from '@/firebaseConfig'
+import { useEffect } from "react";
+import {router} from 'expo-router'
+
 
 export default function PostInput() {
   const [postText, setPostText] = useState("");
   const [image, setImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser]:any = useState()
+  const [refreshing, setRefreshing] = useState(false);
+  // getting user
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(`${env.API_URL}/users/profile?email=${auth.currentUser?.email}`);
+        const data = await response.json();
+        if (data.success) {
+          setUser(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchUser();
+  }, [])
 
+  if(loading)return <ActivityIndicator size='large'></ActivityIndicator>
   // Function to pick an image
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -29,10 +54,9 @@ export default function PostInput() {
       setImage(result.assets[0].uri);
     }
   };
-
   // Function to handle posting with text and optional image
  const handlePost = async () => {
-   if (!postText.trim() && !image) {
+   if (!postText.trim()) {
      Alert.alert("Error", "Post cannot be empty.");
      return;
    }
@@ -55,27 +79,15 @@ export default function PostInput() {
      }
    }
 
-   const formData = new FormData();
-   formData.append("content", postText);
-
-   // If image was uploaded successfully, include the URL in the form data
-   if (imageUrl) {
-     formData.append("image", imageUrl);
-   }
-
    try {
-     const response = await axios.post(`${env.API_URL}/posts/create`, formData, {
-       headers: {
-         "Content-Type": "multipart/form-data",
-       },
-     });
+     const response = await axios.post(`${env.API_URL}/posts/create`, {'author':user._id, 'content':postText});
 
      if (response.status === 201) {
-       Alert.alert("Success", "Post created!");
        setPostText(""); // Clear the post text
        setImage(null); // Clear the image
+
      }
-   } catch (error:any) {
+    } catch (error:any) {
      console.error("Error posting:", error);
 
      if (axios.isAxiosError(error) && error.response) {
@@ -85,7 +97,9 @@ export default function PostInput() {
      } else {
        Alert.alert("Error", "Network error. Please try again.");
      }
-   }
+    }finally{
+      router.push("/")
+    }
  };
 
 
@@ -98,7 +112,7 @@ export default function PostInput() {
     <View className="p-4 border-b border-gray-300">
       <TextInput
         multiline
-        numberOfLines={2}
+        numberOfLines={10}
         className="p-3 bg-gray-200 rounded-lg"
         placeholder="What's on your mind?"
         placeholderTextColor="#888"

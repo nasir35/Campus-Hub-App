@@ -5,11 +5,11 @@ import { useColorScheme } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { env } from "@/constants/envValues";
 import PostCard from "@/components/Card";
-
-// Importing modularized components
 import Header from "@/components/Header";
 import SearchBar from "@/components/SearchBar";
 import PostInput from "@/components/PostInput";
+import {router} from 'expo-router'
+
 
 export default function Newsfeed() {
   const [searchVisible, setSearchVisible] = useState(false);
@@ -35,6 +35,10 @@ export default function Newsfeed() {
     fetchPosts();
   }, []);
 
+  
+
+  const handlePress = (id:string) => router.push(`/posts/${id}`)
+
   if (loading)
     return (
       <View className="flex-1 justify-center items-center">
@@ -58,7 +62,7 @@ export default function Newsfeed() {
         data={posts}
         renderItem={({ item }) => (
           <View className="mt-5">
-            <PostCard data={item} />
+            <PostCard data={item} onPress={()=>{handlePress(item._id)}} />
           </View>
         )}
         keyExtractor={(item) => item._id}

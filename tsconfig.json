@@ -16,5 +16,5 @@
     "expo-env.d.ts",
     "backend/server.js",
     "nativewind-env.d.ts"
-  ]
+, "app/posts/[id].jsx"  ]
 }
