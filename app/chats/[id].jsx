@@ -34,7 +34,7 @@ export default function SingleChat() {
       <View className="flex-1 p-4">
         {/* Header */}
         <View className="flex-row items-center justify-between bg-white p-3 rounded-lg shadow-md mb-4">
-          <TouchableOpacity onPress={()=>{router.push('../(tab)/chat'), console.log('kaj kor bhai')}} >
+          <TouchableOpacity onPress={()=>{router.push('../(tab)/chat')}} >
             <Image source={icons.backArrow} />
           </TouchableOpacity>
           <Text className="text-lg font-bold">{chatUser.name}</Text>
