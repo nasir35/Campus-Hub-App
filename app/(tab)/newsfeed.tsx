@@ -10,20 +10,23 @@ import PostCard from "@/components/Card";
 import Header from "@/components/Header";
 import SearchBar from "@/components/SearchBar";
 import PostInput from "@/components/PostInput";
+import axios from "axios";
+import {useAuth} from "../context/authContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Newsfeed() {
   const [searchVisible, setSearchVisible] = useState(false);
-  const { colorScheme } = useColorScheme();
   const [posts, setPosts]: any = useState([]);
   const [loading, setLoading] = useState(true);
+  const auth = useAuth();
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch(`${env.API_URL}/posts`);
-        const data = await response.json();
-        if (data.success) {
-          setPosts(data.data);
+        const token = await AsyncStorage.getItem("token");
+        const postsRes  = await axios.get(`${env.API_URL}/posts`);
+        if (postsRes.status === 200) { 
+          setPosts(postsRes.data.data);
         }
       } catch (error) {
         console.error("Error fetching posts:", error);

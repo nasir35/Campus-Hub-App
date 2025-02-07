@@ -1,34 +1,29 @@
-import { Redirect, useRouter } from "expo-router";
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-import { useEffect, useState } from "react";
-import { auth } from "../firebaseConfig"; // Ensure correct path
-import { onAuthStateChanged, User } from "firebase/auth";
+import { useEffect } from "react";
+import { useRouter } from "expo-router";
+import { View, Text, ActivityIndicator } from "react-native";
+import { useAuth } from "@/app/context/authContext";
 
 export default function Home() {
-  const [user, setUser] = useState<null | User | undefined>(undefined); // Undefined to handle loading state
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-    });
-    return () => unsubscribe();
-  }, []);
+    if (!isLoading) {
+      // Use `setTimeout` to ensure RootLayout is mounted before navigating
+      setTimeout(() => {
+        router.replace(user ? "/newsfeed" : "/login");
+      }, 0);
+    }
+  }, [user, isLoading]);
 
-  // Show loading indicator while checking auth state
-  if (user === undefined) {
+  if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ color: 'orange', fontSize: 24, fontWeight: '600'}}>Welome To Campus Hub!</Text>
+        <Text style={{ color: "orange", fontSize: 24, fontWeight: "600" }}>Welcome to Campus Hub!</Text>
         <ActivityIndicator size="large" color="#007BFF" />
       </View>
     );
   }
 
-  // Redirect to login if user is not authenticated
-  if (!user) {
-    return <Redirect href="./login" />;
-  }
-
-  return <Redirect href={"./newsfeed"} />
+  return null;
 }

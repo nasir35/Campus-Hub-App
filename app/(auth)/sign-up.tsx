@@ -2,14 +2,13 @@ import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { createUserWithEmailAndPassword, User } from "firebase/auth";
-import * as ImagePicker from "expo-image-picker";
-import { auth } from "../../firebaseConfig"; // Import Firebase Storage
-import { uploadProfileImageToCloudinary } from "@/utils/cloudinaryUpload";
+import * as ImagePicker from "expo-image-picker"
+import { uploadImageToCloudinary } from "@/utils/cloudinaryUpload";
 import { env } from "@/constants/envValues";
 import axios from "axios";
+import { useAuth } from "../context/authContext";
 
 export default function SignUp() {
-  const [user, setUser] = useState<User | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
@@ -17,6 +16,7 @@ export default function SignUp() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const router = useRouter();
+  const auth = useAuth();
 
   const pickImage = async () => {
     try {
@@ -52,24 +52,14 @@ export default function SignUp() {
     }
 
     setUploading(true);
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      setUser(user);
-      
+    try {      
       let profilePic = "https://res.cloudinary.com/dax7yvopb/image/upload/v1738675080/bw6eijmj3vi2ppadpxyp.jpg";
       if (profileImage) {
-        const result = await uploadProfileImageToCloudinary(profileImage);
-        profilePic = result.secure_url;
+        const url = await uploadImageToCloudinary(profileImage);
+        profilePic = url;
       }
 
-      const data:any = await axios.post(`${env.API_URL}/users/register`, { name, email, password, mobile, profilePic });
-      if (data.status===201) {
-        Alert.alert("Success", "Account created successfully! Please Login.");
-        router.push("/login");
-      } else {
-        Alert.alert("Error", data.error);
-      }
+      await auth.register(name, email, password, mobile, profilePic);
     } catch (error) {
       Alert.alert("Sign-Up Error", (error as Error).message);
     } finally {

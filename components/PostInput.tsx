@@ -1,15 +1,37 @@
 import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, Text, Alert, Image } from "react-native";
+import { View, TextInput, TouchableOpacity, Text, Alert, Image, ActivityIndicator } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons"; // Icon library
 import { env } from "@/constants/envValues";
 import axios from "axios";
-import { uploadPostImageToCloudinary } from "@/utils/cloudinaryUpload";
+import { uploadImageToCloudinary } from "@/utils/cloudinaryUpload";
+import { useEffect } from "react";
+
 
 export default function PostInput() {
   const [postText, setPostText] = useState("");
   const [image, setImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser]:any = useState()
+  const [refreshing, setRefreshing] = useState(false);
+  // getting user
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`${env.API_URL}/users/me`);
+        if (response.status === 200) { 
+          setUser(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchUser();
+  }, [])
 
+  if(loading)return <ActivityIndicator size='large'></ActivityIndicator>
   // Function to pick an image
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -29,10 +51,9 @@ export default function PostInput() {
       setImage(result.assets[0].uri);
     }
   };
-
   // Function to handle posting with text and optional image
- const handlePost = async () => {
-   if (!postText.trim() && !image) {
+  const handlePost = async () => {
+   if (!postText.trim()) {
      Alert.alert("Error", "Post cannot be empty.");
      return;
    }
@@ -43,7 +64,7 @@ export default function PostInput() {
    if (image) {
      try {
        // Upload image to Cloudinary
-       imageUrl = await uploadPostImageToCloudinary(image); // This assumes you have the `uploadImageToCloudinary` function already
+       imageUrl = await uploadImageToCloudinary(image); // This assumes you have the uploadImageToCloudinary function already
        if (!imageUrl) {
          Alert.alert("Error", "Image upload failed. Please try again.");
          return;
@@ -55,25 +76,14 @@ export default function PostInput() {
      }
    }
 
-   const formData = new FormData();
-   formData.append("content", postText);
-
-   // If image was uploaded successfully, include the URL in the form data
-   if (imageUrl) {
-     formData.append("image", imageUrl);
-   }
-
    try {
-     const response = await axios.post(`${env.API_URL}/posts/create`, formData, {
-       headers: {
-         "Content-Type": "multipart/form-data",
-       },
-     });
+     const response = await axios.post(`${env.API_URL}/posts/create`, {'author':user._id, 'content':postText, image: imageUrl});
 
      if (response.status === 201) {
        Alert.alert("Success", "Post created!");
        setPostText(""); // Clear the post text
        setImage(null); // Clear the image
+       setRefreshing(true);
      }
    } catch (error:any) {
      console.error("Error posting:", error);
@@ -85,6 +95,8 @@ export default function PostInput() {
      } else {
        Alert.alert("Error", "Network error. Please try again.");
      }
+   }finally{
+    setRefreshing(false);
    }
  };
 
@@ -98,7 +110,7 @@ export default function PostInput() {
     <View className="p-4 border-b border-gray-300">
       <TextInput
         multiline
-        numberOfLines={2}
+        numberOfLines={10}
         className="p-3 bg-gray-200 rounded-lg"
         placeholder="What's on your mind?"
         placeholderTextColor="#888"

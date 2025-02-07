@@ -1,11 +1,18 @@
-import { format, isToday, isThisWeek, differenceInHours } from "date-fns";
+import { format, isToday, isThisWeek, differenceInHours, differenceInMinutes } from "date-fns";
 
 export const formatPostDate = (isoDate: string): string => {
   const date = new Date(isoDate);
 
   if (isToday(date)) {
-    const hoursAgo = differenceInHours(new Date(), date);
-    return hoursAgo < 1 ? "Just now" : `${hoursAgo}hr ago`;
+    const minutesAgo = differenceInMinutes(new Date(), date); // Calculate difference in minutes
+    if (minutesAgo <= 3) {
+      return "Just now";
+    } else if (minutesAgo < 60) {
+      return `${minutesAgo} mins ago`;
+    } else {
+      const hoursAgo = differenceInHours(new Date(), date); // Calculate difference in hours
+      return `${hoursAgo} hr ago`;
+    }
   }
 
   if (isThisWeek(date, { weekStartsOn: 1 })) {

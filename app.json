@@ -14,7 +14,10 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/avatar.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "useNextNotificationsApi": true,
+        "permissions": [],
+        "allowHttpTraffic": true
       }
     },
     "web": {

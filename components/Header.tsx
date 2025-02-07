@@ -13,10 +13,10 @@ export default function Header({ toggleSearch }: { toggleSearch: () => void }) {
       </TouchableOpacity>
       <View className="flex-row items-center gap-5">
         <TouchableOpacity onPress={toggleSearch}>
-          <Feather name="search" size={24} color={colorScheme === "dark" ? "white" : "black"} />
+          <Feather name="search" size={24}  />
         </TouchableOpacity>
         <TouchableOpacity>
-          <Ionicons name="notifications-outline" size={24} color={colorScheme === "dark" ? "white" : "black"} />
+          <Ionicons name="notifications-outline" size={24}  />
         </TouchableOpacity>
       </View>
     </View>

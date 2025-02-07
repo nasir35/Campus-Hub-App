@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { auth } from "../../firebaseConfig";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { useAuth } from "../context/authContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const auth = useAuth();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -16,7 +16,7 @@ export default function Login() {
     }
 
     try {
-      const res = await signInWithEmailAndPassword(auth, email, password);
+      const res = await auth.login(email, password);
       console.log(res);
       router.replace("/"); // Redirect to home after login
     } catch (error: any) {

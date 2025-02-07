@@ -1,24 +1,11 @@
 import { useEffect, useState } from "react";
 import { View, Text, Image, ActivityIndicator } from "react-native";
-import { auth, db } from "../../firebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
+import { useAuth } from "../context/authContext";
 
 export default function ProfileScreen() {
   const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (auth.currentUser) {
-        const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
-        if (userDoc.exists()) {
-          setUserData(userDoc.data());
-        }
-      }
-      setLoading(false);
-    };
-    fetchUserData();
-  }, []);
+  const auth = useAuth();
 
   if (loading) return <ActivityIndicator size="large" color="#007BFF" />;
 
