@@ -6,6 +6,7 @@ import { env } from "@/constants/envValues";
 import axios from "axios";
 import { uploadImageToCloudinary } from "@/utils/cloudinaryUpload";
 import { useEffect } from "react";
+import { router } from "expo-router";
 
 
 export default function PostInput() {
@@ -95,7 +96,8 @@ export default function PostInput() {
        Alert.alert("Error", "Network error. Please try again.");
      }
    }finally{
-    setRefreshing(false);
+     router.push('/')
+     setLoading(false);
    }
  };
 

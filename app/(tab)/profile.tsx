@@ -1,9 +1,10 @@
 import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, ImageSourcePropType, ActivityIndicator, Modal, FlatList } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import icons from '@/constants/icons';
 import { useAuth } from '../context/authContext';
 import PostCard from '@/components/Card';
 import { router } from 'expo-router';
+import { env } from '@/constants/envValues';
 
 interface SettingsItemProps {
   icon: ImageSourcePropType;
@@ -48,6 +49,7 @@ const Profile = () => {
   const auth = useAuth();
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [userPosts, setUserPosts]:any = useState([]); 
 
   const confirmLogout = async () => {
     setLoading(true);
@@ -56,14 +58,32 @@ const Profile = () => {
     setModalVisible(false);
   };
 
-  const handlePress = (id: string) => router.push(`/posts/${id}`);
+  // console.log(auth.user.posts);
+  useEffect(() => {
+  const fetchUserPosts = async () => {
+    if (!auth.user?.posts || auth.user.posts.length === 0) return;
+
+    try {
+      const postPromises = auth.user.posts.map(async (postId: string) => {
+        const response = await fetch(`${env.API_URL}/posts/${postId}`);
+        return response.json();
+      });
+
+      const postResponses = await Promise.all(postPromises);
+      setUserPosts(postResponses.map(res => res.data));
+    } catch (error) {
+      console.error('Error fetching user posts:', error);
+    }
+  };
+  fetchUserPosts();
+}, [auth.user?.posts]);
+
   return (
     <SafeAreaView className="h-full bg-white">
       <FlatList
-        data={auth.user.posts}
-        keyExtractor={(item) => item.id}
-        renderItem={(item) => (<View className="mt-5">
-          <PostCard data={item} onPress={() => { handlePress('1') }} selfId={auth.user.id} />
+        data={userPosts}
+        renderItem={(item) => (console.log(item.item),<View className="mt-5">
+          <PostCard data={item.item} onPress={() => router.push(`/posts/${item.item._id}`)} selfId={auth.user.id} />
         </View>
         )}
         ListHeaderComponent={() => (

@@ -32,6 +32,7 @@ const PostDetailCard = () => {
         setComments(data.data.comments || []);
         const isLiked = data.data.likes.find((id) => (id == auth.user._id));
         setLiked(isLiked)
+        setlikeList(data.data.likes)
       }
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -93,7 +94,8 @@ const PostDetailCard = () => {
     try {
       setLiked(!liked);
       const response = await axios.post(`${env.API_URL}/posts/like/`, { 'postId': _id, 'userId': auth.user._id });
-      console.log(response.data)
+      if(response.status=200)console.log("liked done")
+      fetchPosts();
     } catch (error) {
       console.log(error)
     }
@@ -134,7 +136,7 @@ const PostDetailCard = () => {
         // keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View className="mt-3 bg-gray-100 rounded-md p-2 pb-5">
-            
+
             {/* TODO: add user id in the comment api */}
             <TouchableOpacity onPress={()=>(handleUserPress(item._id), console.log(item._id))}>
               <View className="flex-row gap-2 ml-2 items-center">
@@ -155,7 +157,7 @@ const PostDetailCard = () => {
         ListHeaderComponent={() => (
           <View>
             <View className="flex-row items-center bg-white p-3 rounded-lg shadow-md mb-4">
-              <TouchableOpacity onPress={() => router.back()}>
+              <TouchableOpacity onPress={() => router.push('/')}>
                 <AntDesign name="arrowleft" size={30} color="black" />
               </TouchableOpacity>
               <Text className="text-lg font-bold flex-1 text-center">Post Details</Text>
@@ -223,7 +225,7 @@ const PostDetailCard = () => {
                 <TouchableOpacity onPress={() => { handleLike() }}>
                   <View className="flex-row">
                     <AntDesign name={liked ? "heart" : "hearto"} size={24} color={liked ? "red" : "black"} />
-                    <Text className="ml-2">{likes.length}</Text>
+                    <Text className="ml-2">{likeList.length}</Text>
                   </View>
 
                 </TouchableOpacity>

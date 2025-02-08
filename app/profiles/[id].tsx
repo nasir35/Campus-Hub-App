@@ -10,6 +10,7 @@ const VisitProfile = () => {
   const { id } = useLocalSearchParams();
   const [loading, setLoading] = useState(true);
   const [userData, setUserData]: any = useState(null);
+  const [userPosts, setUserPosts]:any = useState([]); 
   const auth = useAuth();
 
   useEffect(() => {
@@ -26,13 +27,33 @@ const VisitProfile = () => {
     };
     fetchUserData();
   }, [id]);
-
   // Redirect if visiting own profile
   useEffect(() => {
     if (userData?._id && auth.user?._id && userData._id === auth.user._id) {
       router.push('/(tab)/profile');
     }
   }, [userData, auth.user]);
+
+  // fetch own posts
+  useEffect(() => {
+  const fetchUserPosts = async () => {
+    if (!userData?.posts || userData.posts.length === 0) return;
+
+    try {
+      const postPromises = userData.posts.map(async (postId: string) => {
+        const response = await fetch(`${env.API_URL}/posts/${postId}`);
+        return response.json();
+      });
+
+      const postResponses = await Promise.all(postPromises);
+      setUserPosts(postResponses.map(res => res.data));
+    } catch (error) {
+      console.error('Error fetching user posts:', error);
+    }
+  };
+  fetchUserPosts();
+}, [userData?.posts]);
+
 
   if (loading) {
     return (
@@ -53,9 +74,9 @@ const VisitProfile = () => {
   return (
     <SafeAreaView className="h-full bg-white mt-5">
       <FlatList
-        data={userData.posts}
-        keyExtractor={(item) => item._id || item.id} // Ensure key is valid
-        renderItem={({ item }) => (
+        data={userPosts}
+        
+        renderItem={({ item }) => (console.log(item),
           <View className="mt-5">
             <PostCard data={item} onPress={() => router.push(`/posts/${item._id}`)} selfId={userData._id} />
           </View>
