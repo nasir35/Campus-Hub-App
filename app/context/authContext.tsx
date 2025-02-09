@@ -14,6 +14,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   isLoading: boolean;
   token: string;
+  setUser:any
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -132,7 +133,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, 2000);
   };
 
-  return <AuthContext.Provider value={{ user, register, login, logout, isLoading, token }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, register, login, logout, setUser, isLoading, token }}>{children}</AuthContext.Provider>;
 };
 
 // Hook for using auth

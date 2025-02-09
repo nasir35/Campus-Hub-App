@@ -28,15 +28,16 @@ const PostCard = ({ data, onPress, userOnPress, selfId }: { data: any, onPress?:
     <TouchableOpacity onPress={onPress}>
       <View className="bg-white p-4 my-2 rounded-2xl shadow-md">
         {/* Header */}
-        <TouchableOpacity onPress={userOnPress}>
-          <View className="flex-row items-center mb-3">
+
+        <View className="flex-row items-center mb-3">
+          <TouchableOpacity onPress={userOnPress}>
             <Image source={{ uri: author?.profilePic }} className="w-10 h-10 rounded-full mr-3" />
             <View>
               <Text className="text-base font-bold">{author?.name}</Text>
               <Text className="text-xs text-gray-500">{formatPostDate(createdAt)}</Text>
             </View>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
 
 
         <Text className="text-sm mb-3">{renderDetails(content)}</Text>

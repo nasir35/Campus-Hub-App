@@ -40,7 +40,7 @@ export default function Newsfeed() {
   
 
   const handlePress = (id:string) => router.push(`/posts/${id}`)
-  const handleUserPress = (id:string)=>router.push(`../profiles/${id}`)
+  const handleUserPress = (id:string)=>{id==auth.user._id ?router.push('/profile'):router.push(`../profiles/${id}`)}
 
   if (loading)
     return (

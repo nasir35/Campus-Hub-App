@@ -21,6 +21,7 @@ const PostDetailCard = () => {
   const [comments, setComments] = useState([]);
   const [editing, setEditing] = useState(false);
   const [editedContent, setEditedContent] = useState('');
+  const [loading2, setLoading2] = useState(true);
 
   const fetchPosts = async () => {
     try {
@@ -33,6 +34,7 @@ const PostDetailCard = () => {
         const isLiked = data.data.likes.find((id) => (id == auth.user._id));
         setLiked(isLiked)
         setlikeList(data.data.likes)
+        console.log(likeList);
       }
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -73,7 +75,7 @@ const PostDetailCard = () => {
       </View>
     );
   // destructing 
-  const { _id, author, content, image, createdAt, likes } = post;
+  const { _id, author, content, image, createdAt } = post;
 
   //handle post editing 
   const handleUpdatePost = async () => {
@@ -225,7 +227,7 @@ const PostDetailCard = () => {
                 <TouchableOpacity onPress={() => { handleLike() }}>
                   <View className="flex-row">
                     <AntDesign name={liked ? "heart" : "hearto"} size={24} color={liked ? "red" : "black"} />
-                    <Text className="ml-2">{likeList.length}</Text>
+                    <Text className="ml-2">{post.likes.length}</Text>
                   </View>
 
                 </TouchableOpacity>

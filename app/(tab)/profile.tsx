@@ -5,6 +5,7 @@ import { useAuth } from '../context/authContext';
 import PostCard from '@/components/Card';
 import { router } from 'expo-router';
 import { env } from '@/constants/envValues';
+import PostInput from '@/components/PostInput';
 
 interface SettingsItemProps {
   icon: ImageSourcePropType;
@@ -49,7 +50,7 @@ const Profile = () => {
   const auth = useAuth();
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [userPosts, setUserPosts]:any = useState([]); 
+  const [userPosts, setUserPosts]: any = useState([]);
 
   const confirmLogout = async () => {
     setLoading(true);
@@ -60,45 +61,45 @@ const Profile = () => {
 
   // console.log(auth.user.posts);
   useEffect(() => {
-  const fetchUserPosts = async () => {
-    if (!auth.user?.posts || auth.user.posts.length === 0) return;
+    const fetchUserPosts = async () => {
+      if (!auth.user?.posts || auth.user.posts.length === 0) return;
 
-    try {
-      const postPromises = auth.user.posts.map(async (postId: string) => {
-        const response = await fetch(`${env.API_URL}/posts/${postId}`);
-        return response.json();
-      });
+      try {
+        const postPromises = auth.user.posts.map(async (postId: string) => {
+          const response = await fetch(`${env.API_URL}/posts/${postId}`);
+          return response.json();
+        });
 
-      const postResponses = await Promise.all(postPromises);
-      setUserPosts(postResponses.map(res => res.data));
-    } catch (error) {
-      console.error('Error fetching user posts:', error);
-    }
-  };
-  fetchUserPosts();
-}, [auth.user?.posts]);
-
+        const postResponses = await Promise.all(postPromises);
+        setUserPosts(postResponses.map(res => res.data));
+      } catch (error) {
+        console.error('Error fetching user posts:', error);
+      }
+    };
+    fetchUserPosts();
+  }, [auth.user?.posts]);
+  userPosts.reverse();
   return (
-    <SafeAreaView className="h-full bg-white">
+    <SafeAreaView className="bg-white">
+      {/* Header */}
+      <View className="flex flex-row items-center justify-between mt-10 mx-2">
+        <Text className="text-2xl font-bold">Profile</Text>
+        <SettingsItem
+          icon={icons.logout}
+          title=""
+          showArrow={false}
+          onPress={() => setModalVisible(true)}
+          textStyle="text-danger"
+        />
+      </View>
       <FlatList
         data={userPosts}
-        renderItem={(item) => (console.log(item.item),<View className="mt-5">
+        renderItem={(item) => (<View className="mt-5">
           <PostCard data={item.item} onPress={() => router.push(`/posts/${item.item._id}`)} selfId={auth.user.id} />
         </View>
         )}
-        ListHeaderComponent={() => (
-          <View className="pb-32 px-2 mt-5">
-            {/* Header */}
-            <View className="flex flex-row items-center justify-between mt-6 mx-2">
-              <Text className="text-2xl font-bold">Profile</Text>
-              <SettingsItem
-                icon={icons.logout}
-                title=""
-                showArrow={false}
-                onPress={() => setModalVisible(true)}
-                textStyle="text-danger"
-              />
-            </View>
+        ListHeaderComponent={
+          <View className="px-2 mt-5">
 
             {/* Profile Section */}
             <View className="flex items-center mt-5">
@@ -117,6 +118,7 @@ const Profile = () => {
               <Text className="text-gray-700">Phone: {auth.user.mobile}</Text>
             </View>
 
+            {/* Academic Info */}
             <View className="mt-4 bg-gray-100 p-4 rounded-lg">
               <Text className="text-lg font-semibold">Academic Info</Text>
               <Text className="text-gray-700">Batch: {auth.user.batch}</Text>
@@ -124,23 +126,31 @@ const Profile = () => {
             </View>
 
             {/* Social Info */}
-            <View className="mt-4 flex flex-row justify-around bg-gray-100 p-4 rounded-lg">
-              <View className="items-center">
-                <Text className="text-lg font-bold">{auth.user.followers.length}</Text>
-                <Text className="text-gray-500 text-sm">Followers</Text>
-              </View>
-              <View className="items-center">
-                <Text className="text-lg font-bold">{auth.user.following.length}</Text>
-                <Text className="text-gray-500 text-sm">Following</Text>
-              </View>
+            <View className="mt-4 flex flex-row justify-around bg-gray-100 p-4 rounded-lg mb-2">
+              <TouchableOpacity onPress={()=>router.push(`../followers/${auth.user._id}`)}>
+                <View className="items-center">
+                  <Text className="text-lg font-bold">{auth.user.followers.length}</Text>
+                  <Text className="text-gray-500 text-sm">Followers</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={()=>router.push(`../followings/${auth.user._id}`)}>
+                <View className="items-center">
+                  <Text className="text-lg font-bold">{auth.user.following.length}</Text>
+                  <Text className="text-gray-500 text-sm">Following</Text>
+                </View>
+              </TouchableOpacity>
             </View>
-            <View className='p-2'>
-              <Text className='mt-3 font-bold text-center text-xl'>
-                POSTS
-              </Text>
+
+            {/* Section before PostInput */}
+            <View className="mt-4 bg-blue-100 p-4 rounded-lg flex items-center">
+              <Text className="text-lg font-semibold">Create & View Your Posts</Text>
             </View>
+
+            {/* Post Input Component */}
+            <PostInput />
           </View>
-        )} />
+        }
+      />
       <LogoutConfirmationModal visible={modalVisible} onClose={() => setModalVisible(false)} onConfirm={confirmLogout} loading={loading} />
     </SafeAreaView>
   );

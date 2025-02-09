@@ -1,17 +1,26 @@
-import { View, Text, SafeAreaView, Image, TouchableOpacity, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, SafeAreaView, Image, TouchableOpacity, ActivityIndicator, FlatList, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import PostCard from '@/components/Card';
 import { router, useLocalSearchParams } from 'expo-router';
 import { env } from '@/constants/envValues';
 import { useAuth } from '../context/authContext';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import Header from '@/components/Header';
+import PostInput from '@/components/PostInput';
+import axios from 'axios';
 
 const VisitProfile = () => {
   const { id } = useLocalSearchParams();
   const [loading, setLoading] = useState(true);
+  const [loading2, setLoading2] = useState(true);
   const [userData, setUserData]: any = useState(null);
-  const [userPosts, setUserPosts]:any = useState([]); 
+  const [userPosts, setUserPosts]: any = useState([]);
+  const [searchVisible, setSearchVisible] = useState(false);
   const auth = useAuth();
+  const userFollowingList = auth.user.following;
+  const [isFollowing, setIsFollowing] = useState(userFollowingList.includes(id));
+  const [followersCount, setFollowersCount] = useState(userData?.followers?.length || 0);
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -26,33 +35,72 @@ const VisitProfile = () => {
       }
     };
     fetchUserData();
-  }, [id]);
+  }, [id, loading2]);
+
+  // useEffect(()=>{
+  //   const fetchSelfData = async()=>{
+  //     try{
+  //       const selfResponse = await axios.get(`${env.API_URL}/users/me`);
+  //     }catch (error){
+
+  //     }
+  //   }
+  // })
+
   // Redirect if visiting own profile
-  useEffect(() => {
-    if (userData?._id && auth.user?._id && userData._id === auth.user._id) {
-      router.push('/(tab)/profile');
-    }
-  }, [userData, auth.user]);
 
   // fetch own posts
   useEffect(() => {
-  const fetchUserPosts = async () => {
-    if (!userData?.posts || userData.posts.length === 0) return;
+    const fetchUserPosts = async () => {
+      if (!userData?.posts || userData.posts.length === 0) return;
+
+      try {
+        const postPromises = userData.posts.map(async (postId: string) => {
+          const response = await fetch(`${env.API_URL}/posts/${postId}`);
+          return response.json();
+        });
+
+        const postResponses = await Promise.all(postPromises);
+        setUserPosts(postResponses.map(res => res.data));
+      } catch (error) {
+        console.error('Error fetching user posts:', error);
+      }
+    };
+    fetchUserPosts();
+  }, [userData?.posts]);
+
+
+  // handle follow/unfollow
+  const handleFollowPress = async () => {
+    setLoading2(true)
+    const action = isFollowing ? "unfollow" : "follow";
+    const url = `${env.API_URL}/users/${action}/${auth.user?._id}/${userData._id}`;
 
     try {
-      const postPromises = userData.posts.map(async (postId: string) => {
-        const response = await fetch(`${env.API_URL}/posts/${postId}`);
-        return response.json();
-      });
+      const response = await axios.post(url);
+      if (response.status === 200) {
+        // Toggle follow state locally
+        setIsFollowing(!isFollowing);
+        setFollowersCount((prev: any) => (isFollowing ? prev - 1 : prev + 1));
 
-      const postResponses = await Promise.all(postPromises);
-      setUserPosts(postResponses.map(res => res.data));
+        // Fetch the latest self-data
+        const selfResponse = await axios.get(`${env.API_URL}/users/me`, {
+          headers: { Authorization: `Bearer ${auth.token}` }, // Add if needed
+        });
+
+        if (selfResponse.status === 200) {
+          auth.setUser(selfResponse.data.data); // Update auth context
+        }
+      }
     } catch (error) {
-      console.error('Error fetching user posts:', error);
+      console.error(`Error updating follow status:`, error);
+    }finally{
+      setLoading2(false);
     }
   };
-  fetchUserPosts();
-}, [userData?.posts]);
+
+
+
 
 
   if (loading) {
@@ -72,38 +120,44 @@ const VisitProfile = () => {
   }
 
   return (
-    <SafeAreaView className="h-full bg-white mt-5">
+    <SafeAreaView className="flex-1 mt-5 bg-white">
+      {/* Header (Fixed at the Top) */}
+      <View className="flex-row mt-3 items-center bg-white p-3 rounded-lg shadow-md">
+        <TouchableOpacity onPress={() => router.back()}>
+          <AntDesign name="arrowleft" size={30} color="black" />
+        </TouchableOpacity>
+        <Text className="text-lg font-bold flex-1 text-center">{userData.name}</Text>
+      </View>
+
+      {/* Scrollable Content (Profile + Posts) */}
       <FlatList
         data={userPosts}
-        
-        renderItem={({ item }) => (console.log(item),
+        keyExtractor={(item) => item._id}
+        renderItem={({ item }) => (
           <View className="mt-5">
             <PostCard data={item} onPress={() => router.push(`/posts/${item._id}`)} selfId={userData._id} />
           </View>
         )}
-        ListHeaderComponent={() => (
-          <View className="pb-32 px-2 mt-5">
-            {/* Header */}
-            <View className="flex-row items-center bg-white p-3 rounded-lg shadow-md mb-4">
-              <TouchableOpacity onPress={() => router.back()}>
-                <AntDesign name="arrowleft" size={30} color="black" />
-              </TouchableOpacity>
-              <Text className="text-lg font-bold flex-1 text-center">{userData.name}</Text>
-            </View>
-
+        ListHeaderComponent={
+          <View className="px-2 mt-5">
             {/* Profile Section */}
             <View className="flex items-center mt-5 flex-col">
               <Image source={{ uri: userData.profilePic }} className="size-32 rounded-full" />
-              {/* Role Text */}
               <Text className="text-gray-500 text-sm mt-2">{userData.role}</Text>
 
-              {/* Buttons container */}
+              {/* Buttons */}
               <View className="flex-row justify-between items-center gap-5 mt-3">
-                <TouchableOpacity className="bg-blue-500 p-3 rounded-full" onPress={() => console.log('Send message')}>
+                <TouchableOpacity className="bg-blue-500 p-3 rounded-full" >
                   <FontAwesome name="send" size={24} color="white" />
                 </TouchableOpacity>
-                <TouchableOpacity className="bg-green-500 p-3 rounded-full" onPress={() => console.log('Add friend')}>
-                  <FontAwesome name="user-plus" size={24} color="white" />
+                <TouchableOpacity
+                  className={`p-3 rounded-full ${userFollowingList.includes(userData._id)
+                    ? "bg-red-500" : "bg-green-500"}`} onPress={handleFollowPress}>
+                  <FontAwesome
+                    name={userFollowingList.includes(userData._id) ? "user-times" : "user-plus"}
+                    size={24}
+                    color="white"
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -134,7 +188,8 @@ const VisitProfile = () => {
               </View>
             </View>
           </View>
-        )}
+        }
+        showsVerticalScrollIndicator={false}
       />
     </SafeAreaView>
   );

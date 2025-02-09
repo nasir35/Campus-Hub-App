@@ -16,5 +16,5 @@
     "expo-env.d.ts",
     "backend/server.js",
     "nativewind-env.d.ts"
-, "app/posts/[id].jsx"  ]
+, "app/posts/[id].jsx", "app/followers/[id].jsx", "app/followings/[id].jsx"  ]
 }
