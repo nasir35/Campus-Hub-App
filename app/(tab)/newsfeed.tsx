@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
-import { Ionicons, Feather, MaterialIcons } from "@expo/vector-icons";
+import { View,  FlatList, ActivityIndicator } from "react-native";
 import { useColorScheme } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { env } from "@/constants/envValues";

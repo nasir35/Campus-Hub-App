@@ -37,23 +37,9 @@ const VisitProfile = () => {
     fetchUserData();
   }, [id, loading2]);
 
-  // useEffect(()=>{
-  //   const fetchSelfData = async()=>{
-  //     try{
-  //       const selfResponse = await axios.get(`${env.API_URL}/users/me`);
-  //     }catch (error){
-
-  //     }
-  //   }
-  // })
-
-  // Redirect if visiting own profile
-
-  // fetch own posts
   useEffect(() => {
     const fetchUserPosts = async () => {
       if (!userData?.posts || userData.posts.length === 0) return;
-
       try {
         const postPromises = userData.posts.map(async (postId: string) => {
           const response = await fetch(`${env.API_URL}/posts/${postId}`);
@@ -61,13 +47,18 @@ const VisitProfile = () => {
         });
 
         const postResponses = await Promise.all(postPromises);
-        setUserPosts(postResponses.map(res => res.data));
+        if (postResponses.length) {
+          setUserPosts(postResponses.map(res => res.data))
+          const FilteredPost = userPosts.filter((item: any) => item != undefined);
+          setUserPosts(FilteredPost)
+          console.log(userPosts)
+        }
       } catch (error) {
         console.error('Error fetching user posts:', error);
       }
     };
     fetchUserPosts();
-  }, [userData?.posts]);
+  }, []);
 
 
   // handle follow/unfollow
@@ -94,14 +85,10 @@ const VisitProfile = () => {
       }
     } catch (error) {
       console.error(`Error updating follow status:`, error);
-    }finally{
+    } finally {
       setLoading2(false);
     }
   };
-
-
-
-
 
   if (loading) {
     return (
@@ -132,7 +119,7 @@ const VisitProfile = () => {
       {/* Scrollable Content (Profile + Posts) */}
       <FlatList
         data={userPosts}
-        keyExtractor={(item) => item._id}
+        // keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <View className="mt-5">
             <PostCard data={item} onPress={() => router.push(`/posts/${item._id}`)} selfId={userData._id} />

@@ -44,7 +44,7 @@ const PostDetailCard = () => {
   };
 
   const auth = useAuth()
-  const handleUserPress = (id) => router.push(`../profiles/${id}`)
+  const handleUserPress = (id) => { id == auth.user._id ? router.back() : router.push(`../profiles/${id}`) }
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -96,7 +96,7 @@ const PostDetailCard = () => {
     try {
       setLiked(!liked);
       const response = await axios.post(`${env.API_URL}/posts/like/`, { 'postId': _id, 'userId': auth.user._id });
-      if(response.status=200)console.log("liked done")
+      if (response.status = 200) console.log("liked done")
       fetchPosts();
     } catch (error) {
       console.log(error)
@@ -140,7 +140,7 @@ const PostDetailCard = () => {
           <View className="mt-3 bg-gray-100 rounded-md p-2 pb-5">
 
             {/* TODO: add user id in the comment api */}
-            <TouchableOpacity onPress={()=>(handleUserPress(item._id), console.log(item._id))}>
+            <TouchableOpacity onPress={() => (handleUserPress(item._id), console.log(item._id))}>
               <View className="flex-row gap-2 ml-2 items-center">
                 <Image
                   source={{ uri: item.user.profilePic }}
@@ -159,7 +159,7 @@ const PostDetailCard = () => {
         ListHeaderComponent={() => (
           <View>
             <View className="flex-row items-center bg-white p-3 rounded-lg shadow-md mb-4">
-              <TouchableOpacity onPress={() => router.push('/')}>
+              <TouchableOpacity onPress={() => router.back()}>
                 <AntDesign name="arrowleft" size={30} color="black" />
               </TouchableOpacity>
               <Text className="text-lg font-bold flex-1 text-center">Post Details</Text>
@@ -168,7 +168,7 @@ const PostDetailCard = () => {
             <View className="bg-white p-4 rounded-2xl shadow-md">
               {/* Author */}
               <View className="flex-row items-center justify-between mb-3">
-                <TouchableOpacity onPress={()=>handleUserPress(author._id)}>
+                <TouchableOpacity onPress={() => handleUserPress(author._id)}>
                   <View className="flex-row items-center mb-3">
                     <Image source={{ uri: author?.profilePic }} className="w-10 h-10 rounded-full mr-3" />
                     <View>

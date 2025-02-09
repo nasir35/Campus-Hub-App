@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, FlatList, Image, TouchableOpacity } from 'react-native';
+import { View, Text, SafeAreaView, FlatList, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -7,51 +7,70 @@ import { useAuth } from '../context/authContext';
 import axios from 'axios';
 
 const FollowingList = () => {
-  const [following, setFollowing] = useState([]);
+  const [followingIds, setFollowingIds] = useState([]); // Store just the IDs
+  const [followingUsers, setFollowingUsers] = useState([]); // Store full user data
   const [loading, setLoading] = useState(true);
+  const [loading2, setLoading2] = useState(true);
   const auth = useAuth();
-
-  useEffect(() => {
-    setFollowing([
-      { _id: '1', name: 'John Doe', role: 'Software Engineer', profilePic: 'https://via.placeholder.com/150' },
-      { _id: '2', name: 'Jane Smith', role: 'Data Scientist', profilePic: 'https://via.placeholder.com/150' },
-      { _id: '3', name: 'Alice Johnson', role: 'Product Manager', profilePic: 'https://via.placeholder.com/150' },
-    ]);
-  }, []);
 
   useEffect(() => {
     const fetchFollowing = async () => {
       try {
-        const response = await axios.get(`${env.API_URL}/users/${auth.user?._id}/following`);
-        setFollowing(response.data.following);
+        const response = await axios.get(`${env.API_URL}/users/${auth.user?._id}`);
+        const ids = response.data.data.following;
+        setFollowingIds(ids); // Store the IDs
+
+        // Fetch full user details
+        const userDetails = await Promise.all(
+          ids.map(id => axios.get(`${env.API_URL}/users/${id}`).then(res => res.data.data))
+        );
+
+        setFollowingUsers(userDetails);
       } catch (error) {
         console.error('Error fetching following list:', error);
       } finally {
         setLoading(false);
       }
     };
+
     fetchFollowing();
-  }, [auth.user]);
+  }, [auth.user, loading2]);
 
   if (loading) {
     return (
-      <SafeAreaView className="h-full flex justify-center items-center bg-white">
-        <Text className="text-lg text-gray-700">Loading...</Text>
-      </SafeAreaView>
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" className="text-primary-300 mt-5" />
+      </View>
     );
   }
+
+  // handle follow/unfollow
+  const handleFollowPress = async (id) => {
+    setLoading2(true)
+    const url = `${env.API_URL}/users/unfollow/${auth.user?._id}/${id}`;
+    try {
+      const response = await axios.post(url);
+      if (response.status === 200) {
+      }
+    } catch (error) {
+      console.error(`Error updating follow status:`, error);
+    }finally{
+      setLoading2(false);
+    }
+  };
+
 
   return (
     <SafeAreaView className="flex-1 bg-white p-4">
       <View className="flex-row items-center mb-4 mt-8">
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.push('../(tab)/profile')}>
           <AntDesign name="arrowleft" size={30} color="black" />
         </TouchableOpacity>
-        <Text className="text-lg font-bold flex-1 text-center">Followers</Text>
+        <Text className="text-lg font-bold flex-1 text-center">Following</Text>
       </View>
 
       <FlatList
-        data={following}
+        data={followingUsers}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <View className="flex-row items-center bg-gray-100 p-4 mb-2 rounded-lg shadow-sm">
@@ -63,7 +82,7 @@ const FollowingList = () => {
             <TouchableOpacity className="bg-blue-500 p-2 rounded-lg mr-2">
               <FontAwesome name="send" size={18} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity className="bg-red-500 p-2 rounded-lg">
+            <TouchableOpacity className="bg-red-500 p-2 rounded-lg" onPress={()=>{console.log("what"),handleFollowPress(item._id)}}>
               <FontAwesome name="user-times" size={18} color="white" />
             </TouchableOpacity>
           </View>

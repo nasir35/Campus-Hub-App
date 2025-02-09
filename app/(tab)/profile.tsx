@@ -6,6 +6,7 @@ import PostCard from '@/components/Card';
 import { router } from 'expo-router';
 import { env } from '@/constants/envValues';
 import PostInput from '@/components/PostInput';
+import axios from 'axios';
 
 interface SettingsItemProps {
   icon: ImageSourcePropType;
@@ -38,7 +39,7 @@ const LogoutConfirmationModal = ({ visible, onClose, onConfirm, loading }: { vis
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onConfirm} className="px-6 py-2 rounded bg-red-600">
-            {loading ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-bold">Logout</Text>}
+            {loading ? <ActivityIndicator className = "flex items-center justify-center" color="#fff" /> : <Text className="text-white font-bold">Logout</Text>}
           </TouchableOpacity>
         </View>
       </View>
@@ -69,16 +70,17 @@ const Profile = () => {
           const response = await fetch(`${env.API_URL}/posts/${postId}`);
           return response.json();
         });
-
         const postResponses = await Promise.all(postPromises);
-        setUserPosts(postResponses.map(res => res.data));
+        setUserPosts(postResponses.map(res => res.data));    
       } catch (error) {
         console.error('Error fetching user posts:', error);
       }
+      
     };
     fetchUserPosts();
   }, [auth.user?.posts]);
   userPosts.reverse();
+
   return (
     <SafeAreaView className="bg-white">
       {/* Header */}
