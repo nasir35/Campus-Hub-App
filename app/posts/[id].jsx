@@ -44,7 +44,7 @@ const PostDetailCard = () => {
   };
 
   const auth = useAuth()
-  const handleUserPress = (id) => { id == auth.user._id ? router.back() : router.push(`../profiles/${id}`) }
+  const handleUserPress = (id) => { id == auth.user._id ? router.push('/(tab)/profile') : router.push(`../profiles/${id}`) }
 
   useEffect(() => {
     const fetchPosts = async () => {
