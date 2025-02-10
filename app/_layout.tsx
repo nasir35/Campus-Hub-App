@@ -6,12 +6,12 @@ import "@/global.css"
 
 export default function RootLayout() {
   return (
-      <>
+    <>
       <AuthProvider>
         <AuthCheck />
       </AuthProvider>
       <Toast />
-      </>
+    </>
   );
 }
 
@@ -26,6 +26,8 @@ function AuthCheck() {
   }
 
   return (
-      <Slot />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tab)" />
+    </Stack>
   );
 }

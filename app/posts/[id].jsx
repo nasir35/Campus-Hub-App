@@ -91,6 +91,23 @@ const PostDetailCard = () => {
     }
   };
 
+   // handle post delete 
+  const handlePostDelete = async () => {
+    try {
+      const response = await axios.delete(`${env.API_URL}/posts/delete/${id}`, {
+        headers: {
+          'authorId': author._id,
+          'userId': auth.user._id
+        }
+      });
+      if (response.status === 200) {
+        Alert("Post Deleted Sucessfully");
+      }
+    } catch (error) {
+      console.error("Error updating post:", error);
+    }
+  }
+
   // handle like
   const handleLike = async () => {
     try {
@@ -140,7 +157,7 @@ const PostDetailCard = () => {
           <View className="mt-3 bg-gray-100 rounded-md p-2 pb-5">
 
             {/* TODO: add user id in the comment api */}
-            <TouchableOpacity onPress={() => (handleUserPress(item._id), console.log(item._id))}>
+            <TouchableOpacity onPress={() => (handleUserPress(item.user._id))}>
               <View className="flex-row gap-2 ml-2 items-center">
                 <Image
                   source={{ uri: item.user.profilePic }}
@@ -156,7 +173,7 @@ const PostDetailCard = () => {
           </View>
 
         )}
-        ListHeaderComponent={() => (
+        ListHeaderComponent={
           <View>
             <View className="flex-row items-center bg-white p-3 rounded-lg shadow-md mb-4">
               <TouchableOpacity onPress={() => router.back()}>
@@ -177,7 +194,7 @@ const PostDetailCard = () => {
                     </View>
                   </View>
                 </TouchableOpacity>
-                {author._id === auth.user._id ? (
+                {author._id === auth.user._id || auth.user.role == 'Admin' ? (
                   editing ? (
                     <View className="flex-row">
                       <TouchableOpacity
@@ -194,12 +211,18 @@ const PostDetailCard = () => {
                       </TouchableOpacity>
                     </View>
                   ) : (
-                    <TouchableOpacity
+                    <View className="flex-row gap-5 mb-4"><TouchableOpacity
                       onPress={() => setEditing(true)}
-                      className="bg-gray-300 p-2 rounded-lg"
+                      className="bg-gray-300 p-2 rounded-lg flex items-center justify-center"
                     >
-                      <Text className="text-black text-center">Edit</Text>
+                      <FontAwesome5 name="edit" size={20} color="black" />
                     </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={handlePostDelete}
+                        className="bg-red-500 p-2 rounded-lg flex items-center justify-center"
+                      >
+                        <FontAwesome5 name="trash" size={20} color="white" />
+                      </TouchableOpacity></View>
                   )
                 ) : (
                   <View />
@@ -209,7 +232,7 @@ const PostDetailCard = () => {
 
 
               {/* Content */}
-              {editing && author._id == auth.user._id ? (
+              {editing && (author._id == auth.user._id || auth.user.role == 'Admin') ? (
                 <TextInput
                   value={editedContent}
                   onChangeText={setEditedContent}
@@ -241,7 +264,7 @@ const PostDetailCard = () => {
                 </TouchableOpacity>
               </View>
             </View>
-          </View>)} />
+          </View>} />
       {/* Comment Input */}
       <View className="flex-row items-center mt-3 border rounded-lg p-2 border-gray-300">
         <TextInput
