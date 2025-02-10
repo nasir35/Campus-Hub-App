@@ -5,8 +5,6 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { env } from '@/constants/envValues';
 import { useAuth } from '../context/authContext';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
-import Header from '@/components/Header';
-import PostInput from '@/components/PostInput';
 import axios from 'axios';
 
 const VisitProfile = () => {
@@ -15,21 +13,19 @@ const VisitProfile = () => {
   const [loading2, setLoading2] = useState(true);
   const [userData, setUserData]: any = useState(null);
   const [userPosts, setUserPosts]: any = useState([]);
-  const [searchVisible, setSearchVisible] = useState(false);
   const auth = useAuth();
   const userFollowingList = auth.user.following;
   const [isFollowing, setIsFollowing] = useState(userFollowingList.includes(id));
-  const [followersCount, setFollowersCount] = useState(userData?.followers?.length || 0);
-
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        setLoading(true);
         const response = await fetch(`${env.API_URL}/users/${id}`);
         const data = await response.json();
         setUserData(data.data);
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error("Error fetching user data:", error);
       } finally {
         setLoading(false);
       }
@@ -48,22 +44,23 @@ const VisitProfile = () => {
 
         const postResponses = await Promise.all(postPromises);
         if (postResponses.length) {
-          setUserPosts(postResponses.map(res => res.data))
-          const FilteredPost = userPosts.filter((item: any) => item != undefined);
-          setUserPosts(FilteredPost)
-          console.log(userPosts)
+          const fetchedPosts = postResponses.map((res) => res.data);
+          const FilteredPost = fetchedPosts.filter((item: any) => item != undefined);
+          setUserPosts(FilteredPost);
         }
       } catch (error) {
-        console.error('Error fetching user posts:', error);
+        console.error("Error fetching user posts:", error);
       }
     };
-    fetchUserPosts();
-  }, []);
 
+    if (userData) {
+      fetchUserPosts();
+    }
+  }, [userData]); // Added dependency on userData
 
   // handle follow/unfollow
   const handleFollowPress = async () => {
-    setLoading2(true)
+    setLoading2(true);
     const action = isFollowing ? "unfollow" : "follow";
     const url = `${env.API_URL}/users/${action}/${auth.user?._id}/${userData._id}`;
 
@@ -72,7 +69,6 @@ const VisitProfile = () => {
       if (response.status === 200) {
         // Toggle follow state locally
         setIsFollowing(!isFollowing);
-        setFollowersCount((prev: any) => (isFollowing ? prev - 1 : prev + 1));
 
         // Fetch the latest self-data
         const selfResponse = await axios.get(`${env.API_URL}/users/me`, {
@@ -134,17 +130,11 @@ const VisitProfile = () => {
 
               {/* Buttons */}
               <View className="flex-row justify-between items-center gap-5 mt-3">
-                <TouchableOpacity className="bg-blue-500 p-3 rounded-full" >
+                <TouchableOpacity className="bg-blue-500 p-3 rounded-full">
                   <FontAwesome name="send" size={24} color="white" />
                 </TouchableOpacity>
-                <TouchableOpacity
-                  className={`p-3 rounded-full ${userFollowingList.includes(userData._id)
-                    ? "bg-red-500" : "bg-green-500"}`} onPress={handleFollowPress}>
-                  <FontAwesome
-                    name={userFollowingList.includes(userData._id) ? "user-times" : "user-plus"}
-                    size={24}
-                    color="white"
-                  />
+                <TouchableOpacity className={`p-3 rounded-full ${userFollowingList.includes(userData._id) ? "bg-red-500" : "bg-green-500"}`} onPress={handleFollowPress}>
+                  <FontAwesome name={userFollowingList.includes(userData._id) ? "user-times" : "user-plus"} size={24} color="white" />
                 </TouchableOpacity>
               </View>
             </View>
