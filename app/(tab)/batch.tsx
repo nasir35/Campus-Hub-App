@@ -12,7 +12,7 @@ import { Picker } from '@react-native-picker/picker';
 
 const Batch = () => {
   const auth = useAuth();
-  const userBatch = auth.user.batch.length ? auth.user.batch[0] : '';
+  const userBatch = auth.user.batch? auth.user.batch[0] : '';
   const [batchName, setBatchName] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
 
@@ -85,8 +85,8 @@ const Batch = () => {
             {/* Batch Creation Illustration */}
             <View className="items-center mb-4">
               <Image
-                source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2750/2750643.png' }}
-                className="w-24 h-24"
+                source={images.group}
+                className="w-32 h-32"
               />
               <Text className="text-xl font-bold mt-2">Create a New Batch</Text>
               <Text className="text-gray-600 text-sm text-center">Organize and manage your study group efficiently!</Text>
@@ -133,8 +133,8 @@ const Batch = () => {
             </View>
 
             {/* Profile Picture Picker */}
-            <TouchableOpacity onPress={pickImage} className="bg-gray-300 px-4 py-2 rounded mb-2">
-              <Text className="text-black font-bold">Pick Profile Picture</Text>
+           <TouchableOpacity onPress={pickImage} className="bg-blue-500 px-6 py-3 rounded-lg mb-3 shadow-lg flex-row items-center justify-center">
+              <Text className="text-white font-bold text-lg">📷 Pick Profile Picture</Text>
             </TouchableOpacity>
 
             {profilePic ? <Image source={{ uri: profilePic }} className="w-20 h-20 rounded-full mb-2" /> : null}
