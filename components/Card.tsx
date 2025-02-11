@@ -29,8 +29,8 @@ const PostCard = ({ data, onPress, userOnPress, selfId }: { data: any, onPress?:
       <View className="bg-white p-4 my-2 rounded-2xl shadow-md">
         {/* Header */}
 
-        <View className=" mb-3">
-          <TouchableOpacity onPress={userOnPress} className="flex-row items-center">
+        <View className="mb-3">
+          <TouchableOpacity onPress={userOnPress} className="flex-row items-center w-1/2">
             <Image source={{ uri: author?.profilePic }} className="w-10 h-10 rounded-full mr-3" />
             <View>
               <Text className="text-base font-bold">{author?.name}</Text>
@@ -51,7 +51,7 @@ const PostCard = ({ data, onPress, userOnPress, selfId }: { data: any, onPress?:
               <Text className="ml-2">{likes.length}</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onPress}>
             <View className="flex-row">
               <Feather name="message-circle" size={24} color="black" />
               <Text className="text-sm ml-1">{comments.length}</Text></View>
