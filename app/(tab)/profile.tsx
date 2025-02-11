@@ -64,23 +64,28 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserPosts = async () => {
       if (!auth.user?.posts || auth.user.posts.length === 0) return;
-
       try {
         const postPromises = auth.user.posts.map(async (postId: string) => {
           const response = await fetch(`${env.API_URL}/posts/${postId}`);
           return response.json();
         });
-        const postResponses = await Promise.all(postPromises);
-        setUserPosts(postResponses.map(res => res.data));    
-      } catch (error) {
-        console.error('Error fetching user posts:', error);
-      }
-      
-    };
-    fetchUserPosts();
-  }, [auth.user?.posts]);
-  userPosts.reverse();
 
+        const postResponses = await Promise.all(postPromises);
+        if (postResponses.length) {
+          const fetchedPosts = postResponses.map((res) => res.data);
+          const FilteredPost = fetchedPosts.filter((item: any) => item != undefined);
+          setUserPosts(FilteredPost);
+        }
+      } catch (error) {
+        console.error("Error fetching user posts:", error);
+      }
+    };
+
+    if (auth.user) {
+      fetchUserPosts();
+    }
+  }, [auth.user]);
+  userPosts.reverse();
   return (
     <SafeAreaView className="bg-white">
       {/* Header */}
@@ -96,7 +101,7 @@ const Profile = () => {
       </View>
       <FlatList
         data={userPosts}
-        renderItem={(item) => (<View className="mt-5">
+        renderItem={(item) => (console.log(item),<View className="mt-5">
           <PostCard data={item.item} onPress={() => router.push(`/posts/${item.item._id}`)} selfId={auth.user.id} />
         </View>
         )}

@@ -82,7 +82,7 @@ const FollowingList = () => {
             <TouchableOpacity className="bg-blue-500 p-2 rounded-lg mr-2">
               <FontAwesome name="send" size={18} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity className="bg-red-500 p-2 rounded-lg" onPress={()=>{console.log("what"),handleFollowPress(item._id)}}>
+            <TouchableOpacity className="bg-red-500 p-2 rounded-lg" onPress={()=>{handleFollowPress(item._id)}}>
               <FontAwesome name="user-times" size={18} color="white" />
             </TouchableOpacity>
           </View>

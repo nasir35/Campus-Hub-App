@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity, TextInput, FlatList, Share, ActivityIndicator, Alert } from "react-native";
-import { AntDesign, Feather, } from "@expo/vector-icons";
+import { AntDesign, Feather, FontAwesome5} from "@expo/vector-icons";
 import { formatPostDate } from "@/utils/formattedDateTime";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
