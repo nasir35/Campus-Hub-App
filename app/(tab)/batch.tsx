@@ -228,7 +228,7 @@ const Batch = () => {
       <View className="flex-row items-center justify-between p-5 bg-indigo-600">
         <Text className="text-white text-2xl font-semibold">CSE 5th</Text>
         <TouchableOpacity
-          onPress={() => alert("Redirect to details page")}
+          onPress={() => router.push(`/batches/${69}`)}
           className="bg-white text-indigo-600 px-2  rounded-lg shadow-lg"
         >
           <MaterialCommunityIcons name="card-account-details-outline" size={24} color="black" />

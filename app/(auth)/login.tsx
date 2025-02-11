@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../context/authContext";
+import images from "@/constants/images"
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -25,29 +27,46 @@ export default function Login() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput style={styles.input} placeholder="Email" onChangeText={setEmail} value={email} keyboardType="email-address" />
-      <TextInput style={styles.input} placeholder="Password" onChangeText={setPassword} value={password} secureTextEntry />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push("./sign-up")}>
-                  <Text style={styles.link}>Don't have an account? Sign Up</Text>
-                </TouchableOpacity>
+    <View className="flex-1 justify-center items-center bg-gray-50 p-4">
+      <Image
+        source={images.camp} // Add your logo image
+        style={{ width: 140, height: 120, marginBottom: 30 }}
+      />
+      <Text className="text-indigo-600 text-4xl font-bold mb-6">Login</Text>
+
+      <TextInput
+        style={{ width: "90%", height: 50 }}
+        className="border border-indigo-500 rounded-lg p-3 mb-4 text-lg text-gray-700"
+        placeholder="Email"
+        onChangeText={setEmail}
+        value={email}
+        keyboardType="email-address"
+      />
+      <TextInput
+        style={{ width: "90%", height: 50 }}
+        className="border border-indigo-500 rounded-lg p-3 mb-6 text-lg text-gray-700"
+        placeholder="Password"
+        onChangeText={setPassword}
+        value={password}
+        secureTextEntry
+      />
+
+      <TouchableOpacity
+        className="bg-indigo-600 py-3 px-6 rounded-full mb-4"
+        onPress={handleLogin}
+      >
+        <Text className="text-white text-xl font-semibold">Login</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push("./sign-up")} className="flex-row items-center justify-center space-x-2 mt-4">
+        <Text className="text-indigo-600 text-lg font-semibold">
+          Don't have an account?{" "}
+        </Text>
+        <Text className="text-indigo-600 text-lg font-semibold underline">
+          Sign Up
+        </Text>
+        <Ionicons name="arrow-forward-circle" size={24} color="#5C6AC4" />
+      </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#f8f9fa" },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
-  input: { width: "80%", height: 50, borderWidth: 1, borderRadius: 8, padding: 10, marginBottom: 10 },
-  button: { backgroundColor: "#007BFF", padding: 12, borderRadius: 8, marginTop: 10 },
-  buttonText: { color: "#fff", fontSize: 18 },
-  link: {
-    marginTop: 15,
-    color: "#007BFF",
-    fontSize: 16,
-  },
-});

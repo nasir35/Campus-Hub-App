@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, ActivityIndicator } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image, ActivityIndicator, Alert } from "react-native";
 import { useRouter } from "expo-router";
-import { createUserWithEmailAndPassword, User } from "firebase/auth";
-import * as ImagePicker from "expo-image-picker"
-import { uploadImageToCloudinary } from "@/utils/cloudinaryUpload";
-import { env } from "@/constants/envValues";
-import axios from "axios";
+import * as ImagePicker from "expo-image-picker";
 import { useAuth } from "../context/authContext";
+import { uploadImageToCloudinary } from "@/utils/cloudinaryUpload";
+import images from '@/constants/images'
+import { Feather } from "@expo/vector-icons";
 
 export default function SignUp() {
   const [name, setName] = useState("");
@@ -34,13 +33,8 @@ export default function SignUp() {
       if (!result.canceled) {
         setProfileImage(result.assets[0].uri);
       }
-      
     } catch (error) {
-      if (error instanceof Error) {
-        console.error("Upload failed:", error.message);
-      } else {
-        console.error("Upload failed:", error);
-      }
+      console.error("Upload failed:", error);
       return null;
     }
   };
@@ -52,7 +46,7 @@ export default function SignUp() {
     }
 
     setUploading(true);
-    try {      
+    try {
       let profilePic = "https://res.cloudinary.com/dax7yvopb/image/upload/v1738675080/bw6eijmj3vi2ppadpxyp.jpg";
       if (profileImage) {
         const url = await uploadImageToCloudinary(profileImage);
@@ -60,6 +54,7 @@ export default function SignUp() {
       }
 
       await auth.register(name, email, password, mobile, profilePic);
+      router.push("/login"); // Redirect to login after successful sign up
     } catch (error) {
       Alert.alert("Sign-Up Error", (error as Error).message);
     } finally {
@@ -67,91 +62,80 @@ export default function SignUp() {
     }
   };
 
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
+    <View className="flex-1 justify-center items-center bg-gray-50 px-5 py-8">
+      <Text className="text-indigo-600 text-2xl font-semibold mb-8">Create an Account</Text>
 
       {/* Profile Image Picker */}
-      <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
-        <Image source={profileImage ? { uri: profileImage } : require("../../assets/images/user.png")} style={styles.profileImage} />
-        <Text style={styles.imageText}>Upload Profile Image</Text>
+      <TouchableOpacity onPress={pickImage} className="flex justify-center items-center mb-6">
+        <View className="relative">
+          {/* Profile Image */}
+          <Image
+            source={profileImage ? { uri: profileImage } : require("../../assets/images/user.png")}
+            className="w-32 h-32 rounded-full border-4 border-indigo-600"
+          />
+        </View>
+
+        {/* Upload Icon */}
+        <Feather name="upload" size={28} color="#4F46E5" className="mt-3" />
+
+        {/* Tap to Upload Button */}
+        <View className="bg-indigo-600 px-4 py-2 mt-2 rounded-lg shadow-md">
+          <Text className="text-white text-lg font-semibold">Tap to Upload</Text>
+        </View>
       </TouchableOpacity>
 
-      <TextInput style={styles.input} placeholder="Full Name" value={name} onChangeText={setName} autoCapitalize="words" />
-      <TextInput style={styles.input} placeholder="Mobile Number" value={mobile} onChangeText={setMobile} keyboardType="phone-pad" />
-      <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
-      <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
 
+
+      {/* Input Fields */}
+      <TextInput
+        className="w-full p-3 mb-4 border-2 border-indigo-600 rounded-lg text-lg"
+        placeholder="Full Name"
+        value={name}
+        onChangeText={setName}
+        autoCapitalize="words"
+      />
+      <TextInput
+        className="w-full p-3 mb-4 border-2 border-indigo-600 rounded-lg text-lg"
+        placeholder="Mobile Number"
+        value={mobile}
+        onChangeText={setMobile}
+        keyboardType="phone-pad"
+      />
+      <TextInput
+        className="w-full p-3 mb-4 border-2 border-indigo-600 rounded-lg text-lg"
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      <TextInput
+        className="w-full p-3 mb-6 border-2 border-indigo-600 rounded-lg text-lg"
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+
+      {/* Sign Up Button */}
       {uploading ? (
-        <ActivityIndicator size="large" color="#007BFF" />
+        <ActivityIndicator size="large" color="#6366F1" />
       ) : (
-        <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-          <Text style={styles.buttonText}>Sign Up</Text>
+        <TouchableOpacity
+          onPress={handleSignUp}
+          className="w-full py-4 bg-indigo-600 rounded-lg mb-4"
+        >
+          <Text className="text-white text-center text-lg font-semibold">Sign Up</Text>
         </TouchableOpacity>
       )}
 
-      <TouchableOpacity onPress={() => router.push("./login")}>
-        <Text style={styles.link}>Already have an account? Log in</Text>
+      {/* Already have an account? Link */}
+      <TouchableOpacity onPress={() => router.push("./login")} className="mt-4">
+        <Text className="text-indigo-600 text-lg font-semibold">
+          Already have an account? <Text className="underline">Log in</Text>
+        </Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f9f9f9",
-    padding: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 20,
-    color: "#333",
-  },
-  imagePicker: {
-    alignItems: "center",
-    marginBottom: 15,
-  },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 2,
-    borderColor: "#007BFF",
-  },
-  imageText: {
-    color: "#007BFF",
-    marginTop: 5,
-    fontSize: 16,
-  },
-  input: {
-    width: "90%",
-    padding: 12,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    marginBottom: 15,
-    backgroundColor: "#fff",
-  },
-  button: {
-    backgroundColor: "#007BFF",
-    padding: 15,
-    borderRadius: 8,
-    width: "90%",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  link: {
-    marginTop: 15,
-    color: "#007BFF",
-    fontSize: 16,
-  },
-});

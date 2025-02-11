@@ -8,7 +8,7 @@ import whiteGradient from "@/assets/images/white-gradient.png";
 import map from "@/assets/images/map.png";
 import noResult from "@/assets/images/no-result.png";
 import group from "@/assets/images/group.png"
-
+import camp from "@/assets/images/camp.png"
 export default {
   onboarding,
   avatar,
@@ -19,5 +19,6 @@ export default {
   whiteGradient,
   map,
   noResult,
-  group
+  group,
+  camp
 };
