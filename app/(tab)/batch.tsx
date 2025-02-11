@@ -12,7 +12,7 @@ import axios from 'axios'
 import { env } from '@/constants/envValues'
 import { router } from 'expo-router'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const Batch = () => {
   const auth = useAuth();
@@ -30,20 +30,25 @@ const Batch = () => {
   const [batchCode, setBatchCode] = useState("");
   const [message, setMessage] = useState("");
 
-  const getSelfData = async () => {
-      try {
-        const selfResponse = await axios.get(`${env.API_URL}/users/me`, {
-          headers: { Authorization: `Bearer ${auth.token}` },
-        });
 
-        if (selfResponse.status === 200) {
-          auth.setUser(selfResponse.data.data);
-        }
-        console.log(auth.user);
-      } catch (error) {
-        console.log("Error retrieving data", error);
+  // anounncement 
+  const [showAnnouncementForm, setShowAnnouncementForm] = useState(false);
+  const [announcementTitle, setAnnouncementTitle] = useState('');
+  const [announcementMessage, setAnnouncementMessage] = useState('');
+
+  const getSelfData = async () => {
+    try {
+      const selfResponse = await axios.get(`${env.API_URL}/users/me`, {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      });
+
+      if (selfResponse.status === 200) {
+        auth.setUser(selfResponse.data.data);
       }
-    };
+    } catch (error) {
+      console.log("Error retrieving data", error);
+    }
+  };
 
   //self data update
   useEffect(() => {
@@ -86,7 +91,6 @@ const Batch = () => {
     }
   };
   const userBatch = auth.user.batchChatId ? auth.user.batchChatId : '';
-  console.log(auth.user.batch, auth.user)
 
   // join batch
   const joinBatch = async () => {
@@ -224,7 +228,7 @@ const Batch = () => {
   }
 
   return (
-   <SafeAreaView className="bg-gray-50 flex-1">
+    <SafeAreaView className="bg-gray-50 flex-1">
       <View className="flex-row items-center justify-between p-5 bg-indigo-600">
         <Text className="text-white text-2xl font-semibold">CSE 5th</Text>
         <TouchableOpacity
@@ -251,7 +255,7 @@ const Batch = () => {
             />
           </View>
         )}
-        ListHeaderComponent={() => (
+        ListHeaderComponent={ 
           <View className="px-5">
             {/* Upcoming Classes Section */}
             <View className="my-5">
@@ -267,24 +271,76 @@ const Batch = () => {
             </View>
 
             {/* Announcements Section */}
+
+
             <View className="my-5">
-              <Text className="font-bold text-xl text-indigo-600">Announcements</Text>
-              <FlatList
-                data={[1, 2, 3]}
-                renderItem={({ item }) => (
-                  <ClassAnnouncement
-                    topic="Islamic Seminar"
-                    time="12:00"
-                    from="12 batch"
-                    description="This will select the next occurrence of the word or text that you have selected."
+              {showAnnouncementForm ? (
+                <View className="w-full flex items-center justify-center">
+                  <View className="bg-white p-5 rounded-lg w-3/4">
+                    <Text className="text-indigo-600 text-xl font-bold mb-2">Create Announcement</Text>
+                    <TextInput
+                      className="border px-3 py-2 rounded-lg mb-2"
+                      placeholder="Title"
+                      value={announcementTitle}
+                      onChangeText={setAnnouncementTitle}
+                    />
+                    <TextInput
+                      className="border px-3 py-2 rounded-lg mb-2"
+                      placeholder="Message"
+                      value={announcementMessage}
+                      onChangeText={setAnnouncementMessage}
+                      multiline
+                    />
+                    <View className="flex-row justify-between">
+                      <TouchableOpacity
+                        onPress={() => setShowAnnouncementForm(false)}
+                        className="bg-red-500 px-4 py-2 rounded"
+                      >
+                        <Text className="text-white">Cancel</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          // Handle post logic here (e.g., send the announcement)
+                          setShowAnnouncementForm(false); // Close form after posting
+                        }}
+                        className="bg-green-500 px-4 py-2 rounded"
+                      >
+                        <Text className="text-white">Post</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              ) : (
+                <>
+                  <View className="flex-row justify-between items-center">
+                    <Text className="font-bold text-xl text-indigo-600">Announcements</Text>
+                    <TouchableOpacity
+                      onPress={() => setShowAnnouncementForm(true)}
+                      className="bg-indigo-500 rounded-full"
+                    >
+                      <Ionicons name="add-circle" size={30} color="white" />
+                    </TouchableOpacity>
+                  </View>
+                  <FlatList
+                    data={[1, 2, 3]}
+                    renderItem={({ item }) => (
+                      <ClassAnnouncement
+                        topic="Islamic Seminar"
+                        time="12:00"
+                        from="12 batch"
+                        description="This will select the next occurrence of the word or text that you have selected."
+                      />
+                    )}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ flexDirection: 'row', gap: 12 }}
+                    bounces={false}
                   />
-                )}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerClassName="flex gap-3"
-                bounces={false}
-              />
+                </>
+              )}
             </View>
+
+
 
             {/* Resources Section */}
             <View className="my-5">
@@ -301,14 +357,14 @@ const Batch = () => {
                     ]}
                   />
                 )}
-                
+
                 showsVerticalScrollIndicator={false}
                 contentContainerClassName="flex gap-3"
                 bounces={false}
               />
             </View>
           </View>
-        )}
+        }
       />
     </SafeAreaView>
   );

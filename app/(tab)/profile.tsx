@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, ImageSourcePropType, ActivityIndicator, Modal, FlatList } from 'react-native';
+import { View, Text, SafeAreaView, Image, TouchableOpacity, ImageSourcePropType, ActivityIndicator, Modal, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import icons from '@/constants/icons';
 import { useAuth } from '../context/authContext';
@@ -39,7 +39,7 @@ const LogoutConfirmationModal = ({ visible, onClose, onConfirm, loading }: { vis
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onConfirm} className="px-6 py-2 rounded bg-red-600">
-            {loading ? <ActivityIndicator className = "flex items-center justify-center" color="#fff" /> : <Text className="text-white font-bold">Logout</Text>}
+            {loading ? <ActivityIndicator className="flex items-center justify-center" color="#fff" /> : <Text className="text-white font-bold">Logout</Text>}
           </TouchableOpacity>
         </View>
       </View>
@@ -73,8 +73,10 @@ const Profile = () => {
         const postResponses = await Promise.all(postPromises);
         if (postResponses.length) {
           const fetchedPosts = postResponses.map((res) => res.data);
-          const FilteredPost = fetchedPosts.filter((item: any) => item != undefined);
-          setUserPosts(FilteredPost);
+          const filteredPosts = fetchedPosts.filter((item: any) => item !== undefined);
+
+          // Reverse the order to show the most recent post first
+          setUserPosts(filteredPosts.reverse());
         }
       } catch (error) {
         console.error("Error fetching user posts:", error);
@@ -84,8 +86,9 @@ const Profile = () => {
     if (auth.user) {
       fetchUserPosts();
     }
-  }, [auth.user]);
-  userPosts.reverse();
+  }, [auth.token]);
+
+
   return (
     <SafeAreaView className="bg-white">
       {/* Header */}
@@ -101,62 +104,64 @@ const Profile = () => {
       </View>
       <FlatList
         data={userPosts}
-        renderItem={(item) => (console.log(item),<View className="mt-5">
+        renderItem={(item) => (<View className="mt-5">
           <PostCard data={item.item} onPress={() => router.push(`/posts/${item.item._id}`)} selfId={auth.user.id} />
         </View>
         )}
-        ListHeaderComponent={
-          <View className="px-2 mt-5">
+        ListHeaderComponent={<>
+          {/* Profile Section */}
+          <View className="px-4 mt-5 items-center">
+            <Image source={{ uri: auth.user.profilePic }} className="size-32 rounded-full border-4 border-indigo-600" />
+            <TouchableOpacity className="absolute bottom-2 right-16">
+              <Image source={icons.edit} className="size-6 opacity-70" />
+            </TouchableOpacity>
+            <Text className="text-2xl mt-3 font-bold text-gray-900">{auth.user.name}</Text>
+            <Text className="text-gray-500 text-sm">{auth.user.role}</Text>
+          </View>
 
-            {/* Profile Section */}
-            <View className="flex items-center mt-5">
-              <Image source={{ uri: auth.user.profilePic }} className="size-32 rounded-full" />
-              <TouchableOpacity className="absolute bottom-2 right-16">
-                <Image source={icons.edit} className="size-6" />
-              </TouchableOpacity>
-              <Text className="text-2xl mt-3 font-bold">{auth.user.name}</Text>
-              <Text className="text-gray-500 text-sm">{auth.user.role}</Text>
-            </View>
-
-            {/* User Info */}
-            <View className="mt-6 bg-gray-100 p-4 rounded-lg">
-              <Text className="text-lg font-semibold">Contact Info</Text>
-              <Text className="text-gray-700">Email: {auth.user.email}</Text>
-              <Text className="text-gray-700">Phone: {auth.user.mobile}</Text>
+          {/* Info Sections */}
+          <View className="mt-6 px-4">
+            {/* Contact Info */}
+            <View className="bg-indigo-50 p-4 rounded-lg">
+              <Text className="text-lg font-semibold text-indigo-600">Contact Info</Text>
+              <Text className="text-gray-700">📧 Email: {auth.user.email}</Text>
+              <Text className="text-gray-700">📞 Phone: {auth.user.mobile}</Text>
             </View>
 
             {/* Academic Info */}
-            <View className="mt-4 bg-gray-100 p-4 rounded-lg">
-              <Text className="text-lg font-semibold">Academic Info</Text>
-              <Text className="text-gray-700">Batch: {auth.user.batch}</Text>
-              <Text className="text-gray-700">Department: {auth.user.department}</Text>
+            <View className="mt-4 bg-indigo-50 p-4 rounded-lg">
+              <Text className="text-lg font-semibold text-indigo-600">Academic Info</Text>
+              <Text className="text-gray-700">🎓 Batch: {auth.user.batch}CSE</Text>
+              <Text className="text-gray-700">🏛️ Department: {auth.user.department}CSE</Text>
             </View>
 
             {/* Social Info */}
-            <View className="mt-4 flex flex-row justify-around bg-gray-100 p-4 rounded-lg mb-2">
-              <TouchableOpacity onPress={()=>router.push(`../followers/${auth.user._id}`)}>
+            <View className="mt-4 flex flex-row justify-around bg-indigo-50 p-4 rounded-lg">
+              <TouchableOpacity onPress={() => router.push(`../followers/${auth.user._id}`)}>
                 <View className="items-center">
-                  <Text className="text-lg font-bold">{auth.user.followers.length}</Text>
+                  <Text className="text-lg font-bold text-indigo-600">{auth.user.followers.length}</Text>
                   <Text className="text-gray-500 text-sm">Followers</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={()=>router.push(`../followings/${auth.user._id}`)}>
+              <TouchableOpacity onPress={() => router.push(`../followings/${auth.user._id}`)}>
                 <View className="items-center">
-                  <Text className="text-lg font-bold">{auth.user.following.length}</Text>
+                  <Text className="text-lg font-bold text-indigo-600">{auth.user.following.length}</Text>
                   <Text className="text-gray-500 text-sm">Following</Text>
                 </View>
               </TouchableOpacity>
             </View>
+          </View>
 
-            {/* Section before PostInput */}
-            <View className="mt-4 bg-blue-100 p-4 rounded-lg flex items-center">
-              <Text className="text-lg font-semibold">Create & View Your Posts</Text>
-            </View>
+          {/* Create Post Section */}
+          <View className="mt-6 mx-4 bg-indigo-50 p-4 rounded-lg items-center">
+            <Text className="text-lg font-semibold text-indigo-600">Create & View Your Posts</Text>
+          </View>
 
-            {/* Post Input Component */}
+          {/* Post Input Component */}
+          <View className="px-4">
             <PostInput />
           </View>
-        }
+        </>}
       />
       <LogoutConfirmationModal visible={modalVisible} onClose={() => setModalVisible(false)} onConfirm={confirmLogout} loading={loading} />
     </SafeAreaView>

@@ -105,7 +105,7 @@ const VisitProfile = () => {
   return (
     <SafeAreaView className="flex-1 mt-5 bg-white">
       {/* Header (Fixed at the Top) */}
-      <View className="flex-row mt-3 items-center bg-white p-3 rounded-lg shadow-md">
+      <View className="flex-row mt-3 items-center bg-indigo-600 p-3  shadow-md">
         <TouchableOpacity onPress={() => router.back()}>
           <AntDesign name="arrowleft" size={30} color="black" />
         </TouchableOpacity>
@@ -141,26 +141,26 @@ const VisitProfile = () => {
 
             {/* User Info */}
             <View className="mt-6 bg-gray-100 p-4 rounded-lg">
-              <Text className="text-lg font-semibold">Contact Info</Text>
+              <Text className="text-indigo-600 text-lg font-semibold">Contact Info</Text>
               <Text className="text-gray-700">Email: {userData.email}</Text>
               <Text className="text-gray-700">Phone: {userData.mobile}</Text>
             </View>
 
             {/* Academic Info */}
             <View className="mt-4 bg-gray-100 p-4 rounded-lg">
-              <Text className="text-lg font-semibold">Academic Info</Text>
+              <Text className="text-indigo-600 text-lg font-semibold">Academic Info</Text>
               <Text className="text-gray-700">Batch: {userData.batch}</Text>
               <Text className="text-gray-700">Department: {userData.department}</Text>
             </View>
 
-            {/* Social Info */}
-            <View className="mt-4 flex flex-row justify-around bg-gray-100 p-4 rounded-lg">
+            {/* Stats */}
+            <View className="mt-4 flex-row justify-around w-full bg-gray-100 p-4 rounded-lg shadow-md">
               <View className="items-center">
-                <Text className="text-lg font-bold">{userData.followers?.length || 0}</Text>
+                <Text className="text-lg font-bold text-indigo-600">{userData.followers?.length || 0}</Text>
                 <Text className="text-gray-500 text-sm">Followers</Text>
               </View>
               <View className="items-center">
-                <Text className="text-lg font-bold">{userData.following?.length || 0}</Text>
+                <Text className="text-lg font-bold text-indigo-600">{userData.following?.length || 0}</Text>
                 <Text className="text-gray-500 text-sm">Following</Text>
               </View>
             </View>

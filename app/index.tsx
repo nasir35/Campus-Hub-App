@@ -12,7 +12,7 @@ export default function Home() {
       // Use `setTimeout` to ensure RootLayout is mounted before navigating
       setTimeout(() => {
         router.replace(user ? "/newsfeed" : "/login");
-      }, 0);
+      }, 500);
     }
   }, [user, isLoading]);
 
