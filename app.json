@@ -18,7 +18,8 @@
         "useNextNotificationsApi": true,
         "permissions": [],
         "allowHttpTraffic": true
-      }
+      },
+      "package": "com.nasir35.CampusHub"
     },
     "web": {
       "bundler": "metro",
@@ -39,6 +40,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "8e7402fc-ebc1-4ad6-a433-2bbed86cb0ba"
+      }
     }
   }
 }

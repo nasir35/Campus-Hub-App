@@ -2,7 +2,7 @@ import { AuthProvider, useAuth } from "@/app/context/authContext";
 import { Stack, Slot } from "expo-router";
 import { View, ActivityIndicator } from "react-native";
 import Toast from "react-native-toast-message";
-import "@/global.css"
+import "@/global.css";
 
 export default function RootLayout() {
   return (
@@ -24,7 +24,6 @@ function AuthCheck() {
           <ActivityIndicator size="large" color="#007BFF" />
         </View>
       </Stack>
-
     );
   }
 

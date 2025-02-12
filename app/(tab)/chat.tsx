@@ -1,51 +1,71 @@
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from "react-native";
-import {router} from 'expo-router';
-import image from '@/constants/images'
+import React, { useEffect, useState } from "react";
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
+import { useRouter } from "expo-router";
+import { socketService } from "../services/socketServices";
+import { getUserChats } from "../services/chatServices";
+import { useAuth } from "../context/authContext";
 
-const chats = [
-  {
-    id: "1",
-    name: "John Doe",
-    lastMessage: "Hey! How are you?",
-    time: "10:30 AM",
-    avatar: "https://example.com/john.jpg",
-  },
-  {
-    id: "2",
-    name: "Alice Smith",
-    lastMessage: "Let's meet tomorrow!",
-    time: "9:15 AM",
-    avatar: "https://example.com/alice.jpg",
-  },
-];
+const Chat = () => {
+  const { user, token } = useAuth();
+  const router = useRouter();
+  const [chats, setChats] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const userId = user?._id; // Replace with actual user ID
 
-export default function Chat() {
+  useEffect(() => {
+    setLoading(true);
+    if (!user) {
+    }
+    setLoading(false);
+  }, []);
 
-  const handleChatPress = (id:string) => {router.push(`/chats/${id}`)};
+  useEffect(() => {
+    setLoading(true);
+    fetchChats();
+    socketService.connect(userId);
+
+    return () => {
+      socketService.disconnect();
+    };
+  }, []);
+
+  const fetchChats = async () => {
+    try {
+      const response = await getUserChats(userId, token);
+      setChats(response);
+    } catch (error) {
+      console.error("Error fetching chats:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading || !user)
+    return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: "center" }} />;
+
   return (
-    <View className="mt-10 flex-1 bg-gray-100 p-4">
-      <View className="flex flex-row items-center justify-center">
-        <Text className="p-5 text-xl font-bold">CampusHub</Text>
-      </View>
+    <View style={{ flex: 1, padding: 16 }}>
+      <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 16 }}>Chats</Text>
       <FlatList
         data={chats}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            className="flex-row items-center bg-white p-4 rounded-lg shadow-md mb-3"
-            onPress={() => {handleChatPress('1')}}
-          >
-            <Image source={image.avatar} className="size-16 rounded-full mr-3" />
-            <View className="flex-1">
-              <Text className="text-lg font-bold">{item.name}</Text>
-              <Text className="text-gray-500">{item.lastMessage}</Text>
-            </View>
-            <Text className="text-gray-400">{item.time}</Text>
-          </TouchableOpacity>
-        )}
+        keyExtractor={(item: any) => item._id}
+        renderItem={({ item }) => {
+          console.log("first: ", item._id);
+          return (
+            <TouchableOpacity
+              style={{ padding: 16, borderBottomWidth: 1, borderColor: "#ddd" }}
+              onPress={() => router.push(`/chats/${item._id}`)}
+            >
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>{item.name || "Chat"}</Text>
+              {item.lastMessage && (
+                <Text style={{ color: "gray" }}>{item.lastMessage.content}</Text>
+              )}
+            </TouchableOpacity>
+          );
+        }}
       />
     </View>
   );
-}
+};
 
-
+export default Chat;
