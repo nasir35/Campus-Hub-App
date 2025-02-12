@@ -271,6 +271,77 @@ const Batch = () => {
     }
   };
 
+  const resources = [
+  {
+    title: "Binary Search Notes",
+    courseName: "DSA",
+    details: "Here is a useful resource on Binary Search: http://example.com",
+    images: [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_fx63R8uc1mUtQWlxNgeQe9f-cUPNNGau_w&s",
+    ],
+  },
+  {
+    title: "Graph Algorithms Handbook",
+    courseName: "Algorithms",
+    details: "Comprehensive guide on Graph Algorithms: http://example.com",
+    images: [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuDaqIcN9sqq6rYocvm8EAOmJ84HnvypaxCQ&s",
+    ],
+  },
+  {
+    title: "Sorting Techniques PDF",
+    courseName: "DSA",
+    details: "A PDF on sorting techniques: http://example.com",
+    images: [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiGkN6svJumpLqMfd5LplwCdKftcmPXnFaVw&s",
+    ],
+  },
+  {
+    title: "Operating Systems Notes",
+    courseName: "OS",
+    details: "Notes covering OS concepts: http://example.com",
+    images: [
+      "https://www.istockphoto.com/photo/cdn-content-delivery-network-text-concept-neon-cdn-network-infrastructure-3d-render-gm1474890310-504563169",
+    ],
+  },
+  {
+    title: "Database Management Ebook",
+    courseName: "DBMS",
+    details: "A helpful ebook on Database Management: http://example.com",
+    images: [
+      "https://res.cloudinary.com/dax7yvopb/image/upload/v1729916014/sample-image5.png",
+    ],
+  },
+];
+
+  const courses = [
+  {
+    course: "DSA",
+    teacher: "notPirate",
+    startTime: "12:00",
+  },
+  {
+    course: "Algorithms",
+    teacher: "DrAlgo",
+    startTime: "10:30",
+  },
+  {
+    course: "Operating Systems",
+    teacher: "OSMaster",
+    startTime: "14:00",
+  },
+  {
+    course: "Database Management",
+    teacher: "DBGuru",
+    startTime: "09:45",
+  },
+  {
+    course: "Computer Networks",
+    teacher: "NetNinja",
+    startTime: "16:15",
+  },
+];
+
 
   return (
     <SafeAreaView className="bg-gray-50 flex-1">
@@ -306,8 +377,8 @@ const Batch = () => {
             <View className="my-5">
               <Text className="font-bold text-xl text-indigo-600">Upcoming Classes</Text>
               <FlatList
-                data={[1, 2, 3]}
-                renderItem={({ item }) => <UpcomingClass course="DSA" teacher="notPirate" startTime="12:00" />}
+                data={courses}
+                renderItem={({ item }) => <UpcomingClass course={item.course} teacher={item.teacher} startTime={item.startTime} />}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerClassName="flex gap-3"
@@ -388,15 +459,13 @@ const Batch = () => {
             <View className="my-5">
               <Text className="font-bold text-xl text-indigo-600">Resources</Text>
               <FlatList
-                data={[1, 2, 3, 4]}
+                data={resources}
                 renderItem={({ item }) => (
                   <Resource
-                    title="Red Black pdf sheet added"
-                    courseName="DSA"
-                    details="hello is this is the resource http://www.google.com"
-                    images={[
-                      'https://res.cloudinary.com/dax7yvopb/image/upload/v1729916014/mdnasir3-10:13:33-26-10-2024.png',
-                    ]}
+                    title={item.title}
+                    courseName={item.courseName}
+                    details={item.details}
+                    images={item.images}
                   />
                 )}
 

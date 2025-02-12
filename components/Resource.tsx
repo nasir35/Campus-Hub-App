@@ -19,8 +19,8 @@ const Resource = ({ title, courseName, details, images = [] }: { title: string, 
             <TouchableOpacity key={index} onPress={() => Linking.openURL(image)}>
               <Image
                 source={{ uri: image }}
-                className="w-36 h-36 mr-2 mb-2 rounded-lg border border-gray-200"
-                resizeMode="cover"
+                className="w-40 h-36 mr-2 mb-2 rounded-lg border border-gray-200"
+                resizeMode="contain"
               />
             </TouchableOpacity>
           ))

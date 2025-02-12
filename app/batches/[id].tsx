@@ -8,46 +8,46 @@ import axios from 'axios';
 import { env } from '@/constants/envValues';
 
 const ViewBatch = () => {
-  const {id} = useLocalSearchParams();
+  const { id } = useLocalSearchParams();
   const [memberIds, setMemberIds] = useState([]); // Store just the IDs
   const [memberUsers, setMemberUsers] = useState([]); // Store full user data
   const [loading, setLoading] = useState(true);
   const [loading2, setLoading2] = useState(true);
-  const [batchData, setBatchData]:any = useState();
+  const [batchData, setBatchData]: any = useState();
   const auth = useAuth();
 
   useEffect(() => {
-  const fetchDetails = async () => {
-    try {
-      setLoading(true);
-      // Fetch batch details
-      const response = await axios.get(`${env.API_URL}/batches/details/${id}`);
-      const batchInfo = response.data.data;
-      if(batchInfo)
-        setBatchData(batchInfo);
+    const fetchDetails = async () => {
+      try {
+        setLoading(true);
+        // Fetch batch details
+        const response = await axios.get(`${env.API_URL}/batches/details/${id}`);
+        const batchInfo = response.data.data;
+        if (batchInfo)
+          setBatchData(batchInfo);
 
-      // const ids = batchInfo.membersList;
-      // setMemberIds(ids); // Store the member IDs
+        // const ids = batchInfo.membersList;
+        // setMemberIds(ids); // Store the member IDs
 
-      // // Fetch full user details only if there are members
-      // if (ids.length > 0) {
-      //   const userDetails:any = await Promise.all(
-      //     ids.map((memberId) =>
-      //       axios.get(`${env.API_URL}/users/${memberId}`).then((res) => res.data.data)
-      //     )
-      //   );
-      //   setMemberUsers(userDetails);
-      // }
+        // // Fetch full user details only if there are members
+        // if (ids.length > 0) {
+        //   const userDetails:any = await Promise.all(
+        //     ids.map((memberId) =>
+        //       axios.get(`${env.API_URL}/users/${memberId}`).then((res) => res.data.data)
+        //     )
+        //   );
+        //   setMemberUsers(userDetails);
+        // }
 
-    } catch (error) {
-      console.error('Error fetching batch details:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      } catch (error) {
+        console.error('Error fetching batch details:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchDetails();
-}, [id]); 
+    fetchDetails();
+  }, [id]);
 
 
 
@@ -55,8 +55,17 @@ const ViewBatch = () => {
     'Alice Johnson',
     'Bob Smith',
     'Charlie Brown',
-    'David Williams'
+    'David Williams',
+    'Emma Davis',
+    'Frank Miller',
+    'Grace Thompson',
+    'Henry Wilson',
+    'Isabella Martinez',
+    'Jack Taylor',
+    'Katie Anderson',
+    'Liam Harris',
   ]);
+
   const [newMember, setNewMember] = useState('');
 
   const addMember = () => {
@@ -72,22 +81,22 @@ const ViewBatch = () => {
         <TouchableOpacity onPress={() => router.back()} className="mr-4">
           <AntDesign name="arrowleft" size={30} color="white" />
         </TouchableOpacity>
-        <Text className="text-xl font-bold text-white flex-1 text-center">{batchData.batchName}</Text>
+        <Text className="text-xl font-bold text-white flex-1 text-center">CSE 5th</Text>
       </View>
 
       {/* Batch Image */}
       <View className="items-center mt-5">
         <Image
-          source={{ uri: batchData.batchPic}}
+          source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIIgxBkRnpCQ_2BO3AXHeW-OGY7isSIOSj1kNlz_uBpOrAeiGw2OBZcBIH&s=10' }}
           className="w-72 h-36 rounded-lg shadow-md"
           resizeMode="cover"
         />
       </View>
 
       {/* Batch Info */}
-      <View className="px-5 mt-5">
-        <Text className="text-lg font-semibold text-gray-800">Batch Code: <Text className="text-indigo-600">{batchData.batchCode}</Text></Text>
-        <Text className="text-base text-gray-600 mt-2">{batchData.description}</Text>
+      <View className="px-5 mt-10">
+        <Text className="text-lg font-semibold text-gray-800">Batch Code: <Text className="text-indigo-600">08A7YB21</Text></Text>
+        <Text className="text-base text-gray-600 mt-2">The DSA Spring 2022 batch consists of 40 students and will run from March 1, 2022, to June 30, 2022. The course is instructed by notPirate, covering essential Data Structures and Algorithms concepts.</Text>
       </View>
 
       {/* Add Member Section */}
