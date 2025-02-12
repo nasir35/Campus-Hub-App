@@ -35,6 +35,7 @@ const Batch = () => {
   const [showAnnouncementForm, setShowAnnouncementForm] = useState(false);
   const [announcementTitle, setAnnouncementTitle] = useState('');
   const [announcementMessage, setAnnouncementMessage] = useState('');
+  const [announcements, setAnnouncements]:any = useState([]);
 
   const getSelfData = async () => {
     try {
@@ -55,6 +56,22 @@ const Batch = () => {
     if (auth.token) {
       getSelfData();
     }
+  }, []);
+
+  //fetch announcements
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        const response = await axios.get(`${env.API_URL}/batches/announcements/`);
+        setAnnouncements(response.data.data);
+      } catch (error) {
+        console.log("console log", error)
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnnouncements();
   }, []);
 
   // for creating batch
@@ -90,7 +107,7 @@ const Batch = () => {
       );
     }
   };
-  const userBatch = auth.user.batchChatId ? auth.user.batchChatId : '';
+  const userBatch = auth.user.batch ? auth.user.batch : '';
 
   // join batch
   const joinBatch = async () => {
@@ -227,12 +244,40 @@ const Batch = () => {
     );
   }
 
+  //make announcements 
+  const submitAnnouncement = async () => {
+    if (!announcementTitle || !announcementMessage) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+    try {
+      const response = await axios.post(`${env.API_URL}/batches/announcements/create`, {
+        title: announcementTitle,
+        message: announcementMessage,
+        batchId: userBatch,  // Assuming the first batch
+        createdBy: auth.user._id,
+      });
+      if (response.status === 201) {
+        Alert.alert("Success", "Announcement added!");
+        setShowAnnouncementForm(false);
+        setAnnouncementTitle('');
+        setAnnouncementMessage('');
+        // Refresh announcements list
+        setLoading(true);
+      }
+    } catch (error) {
+      console.error("Error adding announcement:", error);
+      Alert.alert("Error", "Failed to add announcement");
+    }
+  };
+
+
   return (
     <SafeAreaView className="bg-gray-50 flex-1">
       <View className="flex-row items-center justify-between p-5 bg-indigo-600">
         <Text className="text-white text-2xl font-semibold">CSE 5th</Text>
         <TouchableOpacity
-          onPress={() => router.push(`/batches/${69}`)}
+          onPress={() => (router.push(`/batches/${userBatch}`))}
           className="bg-white text-indigo-600 px-2  rounded-lg shadow-lg"
         >
           <MaterialCommunityIcons name="card-account-details-outline" size={24} color="black" />
@@ -255,7 +300,7 @@ const Batch = () => {
             />
           </View>
         )}
-        ListHeaderComponent={ 
+        ListHeaderComponent={
           <View className="px-5">
             {/* Upcoming Classes Section */}
             <View className="my-5">
@@ -299,10 +344,7 @@ const Batch = () => {
                         <Text className="text-white">Cancel</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => {
-                          // Handle post logic here (e.g., send the announcement)
-                          setShowAnnouncementForm(false); // Close form after posting
-                        }}
+                        onPress={submitAnnouncement}
                         className="bg-green-500 px-4 py-2 rounded"
                       >
                         <Text className="text-white">Post</Text>
@@ -322,13 +364,13 @@ const Batch = () => {
                     </TouchableOpacity>
                   </View>
                   <FlatList
-                    data={[1, 2, 3]}
+                    data={announcements}
                     renderItem={({ item }) => (
                       <ClassAnnouncement
-                        topic="Islamic Seminar"
-                        time="12:00"
-                        from="12 batch"
-                        description="This will select the next occurrence of the word or text that you have selected."
+                       topic={item.title}
+                        
+                      description={item.message}
+                            time = {item.createdAt}
                       />
                     )}
                     horizontal
