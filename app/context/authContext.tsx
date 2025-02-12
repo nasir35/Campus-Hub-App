@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
        if (error.response?.status === 401) {
          Alert.alert("Session Expired", "Please log in again.");
-         router.push("/(auth)/login");
+         router.push("../(auth)/login");
        }
      } finally {
        setIsLoading(false);
@@ -119,9 +119,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     setToken("");
     delete axios.defaults.headers.common["Authorization"];
-    setTimeout(() => {
-      router.replace("/(auth)/login"); // Use replace instead of push
-    }, 100); // Small delay allows layout to mount
+
+    router.replace("../(auth)/login"); // Use replace instead of push
+
 
     // Show toast after navigating
     setTimeout(() => {
